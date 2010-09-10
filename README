@@ -1,0 +1,7 @@
+jWorkflow is a workflow engine for JavaScript that provides the ability to
+create workflows to chain methods together in an easy to understand syntax.
+
+
+Contributers:
+
+	Gord Tanner <gord@tinyhippos.com>
