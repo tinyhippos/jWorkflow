@@ -173,4 +173,32 @@ $(document).ready(function () {
         });
 
     });
+
+    test("jWorkflow: it calls the order in the order that it was built, even with Async calls", function() {
+
+        var result = [], 
+            procrastinate = function(msg, baton) { 
+                baton.take();
+                window.setTimeout(function() {
+                    result.push(msg); 
+                    baton.pass();
+                }, 1000);
+            },
+            garlicChicken = function (previous, baton) { procrastinate("garlicChicken", baton); },
+            whiteRice = function(previous, baton) { result.push("whiteRice") },
+            wontonSoup = function (previous, baton) { procrastinate("wontonSoup", baton); },
+            cookiesFortune = function (previous, baton) { result.push("cookiesFortune"); },
+            noAndThen = function (previous, baton) { procrastinate("noAndThen", baton); },
+            order = jWorkflow.order(garlicChicken)
+                            .andThen(whiteRice)
+                            .andThen(wontonSoup)
+                            .andThen(cookiesFortune);
+        
+        order.andThen(noAndThen).andThen(noAndThen);
+
+        order.start(function() {
+            same(["garlicChicken", "whiteRice", "wontonSoup", "cookiesFortune", "noAndThen", "noAndThen"], result, "expected functions to be called in order");
+        });
+    });
+
 });

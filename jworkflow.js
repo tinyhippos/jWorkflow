@@ -1,6 +1,6 @@
 // jWorkflow.js
 // (c) 2010 tinyHippos inc.
-// Underscore is freely distributable under the terms of the MIT license.
+// jWorkflow is freely distributable under the terms of the MIT license.
 // Portions of jWorkflow are inspired by Underscore.js
 var jWorkflow = (function () {
     function _valid(func) {
@@ -12,12 +12,12 @@ var jWorkflow = (function () {
     var transfunctioner =  {
         
         order: function (func) {
-            var _stack = [],
+            var _queue = [],
                 _callback;
 
             _valid(func);
-            _stack.push(func),
-            _baton = function() {
+            _queue.push(func),
+            _baton = (function() {
                 var _taken = false; 
                 return self = {
                     take: function() {
@@ -28,15 +28,15 @@ var jWorkflow = (function () {
                         var result, func;
                         _taken = false;
 
-                        while(_stack.length) {
-                            func = _stack.shift();
+                        while(_queue.length) {
+                            func = _queue.shift();
                             result = func.apply(null, [result, _baton]);
                             if(_baton.taken()) {
                                 break;
                             }
                         }
 
-                        if (_stack.length < 1 && _callback) {
+                        if (_queue.length < 1 && _callback) {
                             _callback.apply();
                         }
                     },
@@ -45,13 +45,13 @@ var jWorkflow = (function () {
                         return _taken;
                     }
                 };
-            }();
+            }());
 
             var self = {
 
                 andThen: function (func) {
                     _valid(func);
-                    _stack.push(func);
+                    _queue.push(func);
                     return self;
                 },
 
