@@ -5,28 +5,36 @@
 var jWorkflow = (function () {
     function _valid(func) {
         if (typeof(func) !== 'function') {
-            throw "func must be a function";
+            throw "expected function but was " + typeof(func);
         }
     }
 
     var transfunctioner =  {
+        
         order: function (func) {
+            var _stack = [];
             _valid(func);
+            _stack.push(func);
 
             var self = {
-            
+
                 andThen: function (func) {
                     _valid(func);
+                    _stack.push(func);
                     return self;
+                },
+
+                start: function () {
+                    while(_stack.length) {
+                        var func = _stack.shift();
+                        func.apply();
+                    }
+
                 }
             };
 
             return self;
 
-        },
-
-        start: function (order) {
-           //start the order
         }
     };
 
