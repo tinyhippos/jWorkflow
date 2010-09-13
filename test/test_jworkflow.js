@@ -24,8 +24,8 @@ $(document).ready(function () {
     test("jWorkflow: we can call andThen on the return value of order", function() {
         expect(2);
 
-        var transfunctioner = function () { };
-        var order = jWorkflow.order(transfunctioner);
+        var transfunctioner = function () { },
+            order = jWorkflow.order(transfunctioner);
         
         ok(order.andThen, "expected to be asked: 'andThen'");
         equals(typeof(order.andThen), "function", "expected andThen to be a function");
@@ -49,13 +49,12 @@ $(document).ready(function () {
     test("jWorkflow: we can call andThen on the return value of andThen", function() {
         expect(2);
 
-        var garlicChicken = function () {};
-        var whiteRice = function () {};
-        var wontonSoup = function () {};
-        var cookiesFortune = function () {};
-        var noAndThen = function () {};
-
-        var order = jWorkflow.order(garlicChicken)
+        var garlicChicken = function () {},
+            whiteRice = function () {},
+            wontonSoup = function () {},
+            cookiesFortune = function () {},
+            noAndThen = function () {};
+            order = jWorkflow.order(garlicChicken)
                             .andThen(whiteRice)
                             .andThen(wontonSoup)
                             .andThen(cookiesFortune);
@@ -69,9 +68,8 @@ $(document).ready(function () {
 
     test("jWorkflow: it doesnt invoke the order function when start isnt called", function() {
         var dude = true,
-            sweet = function () { sweet = false; };
-
-        var order = jWorkflow.order(sweet);
+            sweet = function () { sweet = false; },
+            order = jWorkflow.order(sweet);
 
         ok(dude, "expected sweet to have not been invoked");
         
@@ -79,9 +77,8 @@ $(document).ready(function () {
 
     test("jWorkflow: it calls the order function when start is called", function() {
         var dude = false,
-            sweet = function () { dude = true; };
-
-        var order = jWorkflow.order(sweet);
+            sweet = function () { dude = true; },
+            order = jWorkflow.order(sweet);
 
         order.start();
 
@@ -97,8 +94,9 @@ $(document).ready(function () {
             order2 = jWorkflow.order(whatup);
 
 
-        order.start();
-        ok(what === false, "expected sweet to have been invoked");
+        order.start(function() {
+            ok(what === false, "expected sweet to have been invoked");
+        });
     });
 
     test("jWorkflow: it calls the order in the order that it was built", function() {
@@ -121,9 +119,58 @@ $(document).ready(function () {
         same(["garlicChicken", "whiteRice", "wontonSoup", "cookiesFortune", "noAndThen", "noAndThen"], result, "expected functions to be called in order");
     });
 
+    test("jWorkflow: it get the return value of the previous func", function() {
 
-    
-    
+        var dude = function () { return 42; },
+            sweet = function(previous) { equals(previous, 42, "expected previous to be return value"); },
+            order = jWorkflow.order(dude).andThen(sweet);
 
+        order.start();
 
+    });
+
+    test("jWorkflow: we get a baton play with", function() {
+        var order = jWorkflow.order(function(previous, baton) {
+            ok(baton, "expected a baton");
+            ok(baton.take, "expected to be able to take the baton");
+            ok(baton.pass, "expected to be able to pass the baton");
+        });
+
+        order.start();
+
+    });
+
+    test("jWorkflow: when I take the baton, the next methods are not called if I don't pass it", function() {
+        var transfunctioner = true,
+        dude = function() {},
+        sweet = function() {},
+        noAndThen = function(previous, baton) {
+            baton.take();
+        },
+        fortuneCookie = function() { transfunctioner = false; },
+        order = jWorkflow.order(dude).andThen(sweet).andThen(noAndThen).andThen(fortuneCookie);
+
+        order.start();
+
+        ok(transfunctioner, "fortune Cookie should not have been called because we took the baton and didn't pass it");
+    });
+
+    test("jWorkflow: when I take the baton and pass it async, the next methods are called", function() {
+        var transfunctioner = false,
+        dude = function() {},
+        sweet = function() {},
+        noAndThen = function(previous, baton) {
+            baton.take();
+            window.setTimeout(function() {
+                baton.pass();
+            }, 1000);
+        },
+        fortuneCookie = function() { transfunctioner = true; },
+        order = jWorkflow.order(dude).andThen(sweet).andThen(noAndThen).andThen(fortuneCookie);
+
+        order.start(function() {
+            ok(transfunctioner, "fortune Cookie should have been called because we passed the baton");
+        });
+
+    });
 });

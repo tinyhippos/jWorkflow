@@ -12,9 +12,40 @@ var jWorkflow = (function () {
     var transfunctioner =  {
         
         order: function (func) {
-            var _stack = [];
+            var _stack = [],
+                _callback;
+
             _valid(func);
-            _stack.push(func);
+            _stack.push(func),
+            _baton = function() {
+                var _taken = false; 
+                return self = {
+                    take: function() {
+                        _taken = true;
+                    },
+
+                    pass: function() {
+                        var result, func;
+                        _taken = false;
+
+                        while(_stack.length) {
+                            func = _stack.shift();
+                            result = func.apply(null, [result, _baton]);
+                            if(_baton.taken()) {
+                                break;
+                            }
+                        }
+
+                        if (_stack.length < 1 && _callback) {
+                            _callback.apply();
+                        }
+                    },
+
+                    taken: function() {
+                        return _taken;
+                    }
+                };
+            }();
 
             var self = {
 
@@ -24,12 +55,9 @@ var jWorkflow = (function () {
                     return self;
                 },
 
-                start: function () {
-                    while(_stack.length) {
-                        var func = _stack.shift();
-                        func.apply();
-                    }
-
+                start: function (callback) {
+                    _callback = callback;
+                    _baton.pass();
                 }
             };
 
