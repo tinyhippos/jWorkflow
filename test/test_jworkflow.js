@@ -86,6 +86,7 @@ $(document).ready(function () {
     });
 
     test("jWorkflow: it can handle multiple orders without mixing them", function() {
+    expect(1);
         var dude = false,
             what = false,
             sweet = function () { dude = true; },
@@ -100,6 +101,7 @@ $(document).ready(function () {
     });
 
     test("jWorkflow: it calls the order in the order that it was built", function() {
+        expect(1);
 
         var result = [], 
             garlicChicken = function () { result.push("garlicChicken"); },
@@ -156,6 +158,7 @@ $(document).ready(function () {
     });
 
     test("jWorkflow: when I take the baton and pass it async, the next methods are called", function() {
+        expect(1);
         var transfunctioner = false,
         dude = function() {},
         sweet = function() {},
@@ -175,6 +178,7 @@ $(document).ready(function () {
     });
 
     test("jWorkflow: it calls the order in the order that it was built, even with Async calls", function() {
+        expect(1);
 
         var result = [], 
             procrastinate = function(msg, baton) { 
