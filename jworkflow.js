@@ -13,56 +13,57 @@ var jWorkflow = (function () {
         
         order: function (func) {
             var _queue = [],
-                _callback;
+                _callback,
+                _baton = (function() {
+                    var _taken = false; 
+                    var _callback = null;
+                    return {
 
-            _valid(func);
-            _queue.push(func),
-            _baton = (function() {
-                var _taken = false; 
-                return self = {
-                    take: function() {
-                        _taken = true;
-                    },
+                        take: function() {
+                            _taken = true;
+                        },
 
-                    pass: function() {
-                        var result, func;
-                        _taken = false;
+                        pass: function() {
+                            var result, func;
+                            _taken = false;
 
-                        while(_queue.length) {
-                            func = _queue.shift();
-                            result = func.apply(null, [result, _baton]);
-                            if(_baton.taken()) {
-                                break;
+                            while(_queue.length) {
+                                func = _queue.shift();
+                                result = func.apply(null, [result, _baton]);
+                                if(_baton.taken()) {
+                                    return;
+                                }
                             }
-                        }
 
-                        if (_queue.length < 1 && _callback) {
-                            _callback.apply();
+                            if (_queue.length < 1 && _callback) {
+                                _callback.apply();
+                            }
+                        },
+
+                        start: function(callback) {
+                            _callback = callback;
+                            _baton.pass();
+                        },
+
+                        taken: function() {
+                            return _taken;
                         }
+                    };
+                }()),
+                self = {
+
+                    andThen: function (func) {
+                        _valid(func);
+                        _queue.push(func);
+                        return self;
                     },
 
-                    taken: function() {
-                        return _taken;
+                    start: function (callback) {
+                        _baton.start(callback);
                     }
                 };
-            }());
 
-            var self = {
-
-                andThen: function (func) {
-                    _valid(func);
-                    _queue.push(func);
-                    return self;
-                },
-
-                start: function (callback) {
-                    _callback = callback;
-                    _baton.pass();
-                }
-            };
-
-            return self;
-
+                return self.andThen(func);
         }
     };
 

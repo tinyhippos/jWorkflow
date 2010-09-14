@@ -85,7 +85,7 @@ $(document).ready(function () {
         ok(dude, "expected sweet to have been invoked");
     });
 
-    test("jWorkflow: it can handle multiple orders without mixing them", function() {
+    asyncTest("jWorkflow: it can handle multiple orders without mixing them", function() {
     expect(1);
         var dude = false,
             what = false,
@@ -96,7 +96,8 @@ $(document).ready(function () {
 
 
         order.start(function() {
-            ok(what === false, "expected sweet to have been invoked");
+            start();
+            ok(what === false, "whatup shouldn't have been called");
         });
     });
 
@@ -157,7 +158,7 @@ $(document).ready(function () {
         ok(transfunctioner, "fortune Cookie should not have been called because we took the baton and didn't pass it");
     });
 
-    test("jWorkflow: when I take the baton and pass it async, the next methods are called", function() {
+    asyncTest("jWorkflow: when I take the baton and pass it async, the next methods are called", function() {
         expect(1);
         var transfunctioner = false,
         dude = function() {},
@@ -172,12 +173,13 @@ $(document).ready(function () {
         order = jWorkflow.order(dude).andThen(sweet).andThen(noAndThen).andThen(fortuneCookie);
 
         order.start(function() {
+            start();
             ok(transfunctioner, "fortune Cookie should have been called because we passed the baton");
         });
 
     });
 
-    test("jWorkflow: it calls the order in the order that it was built, even with Async calls", function() {
+    asyncTest("jWorkflow: it calls the order in the order that it was built, even with Async calls", function() {
         expect(1);
 
         var result = [], 
@@ -201,7 +203,8 @@ $(document).ready(function () {
         order.andThen(noAndThen).andThen(noAndThen);
 
         order.start(function() {
-            same(["garlicChicken", "whiteRice", "wontonSoup", "cookiesFortune", "noAndThen", "noAndThen"], result, "expected functions to be called in order");
+            start();
+            same(result, ["garlicChicken", "whiteRice", "wontonSoup", "cookiesFortune", "noAndThen", "noAndThen"], "expected functions to be called in order");
         });
     });
 
