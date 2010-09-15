@@ -34,6 +34,10 @@ The functions passed into the order will not be invoked until you call:
 
     order.start();
 
+The context to be used when invoking the functions can be passed in while creating the order:
+
+    order.andThen(transfunctioner.photonAcceleratorAnnihilationBeam, transfunctioner);
+
 =Passing Values between tasks
 
 jWorkflow tasks can access the return value of the previous task with the previous parameter:
