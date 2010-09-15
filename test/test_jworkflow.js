@@ -167,7 +167,7 @@ $(document).ready(function () {
             baton.take();
             window.setTimeout(function() {
                 baton.pass();
-            }, 1000);
+            }, 10);
         },
         fortuneCookie = function() { transfunctioner = true; },
         order = jWorkflow.order(dude).andThen(sweet).andThen(noAndThen).andThen(fortuneCookie);
@@ -188,7 +188,7 @@ $(document).ready(function () {
                 window.setTimeout(function() {
                     result.push(msg); 
                     baton.pass();
-                }, 1000);
+                }, 10);
             },
             garlicChicken = function (previous, baton) { procrastinate("garlicChicken", baton); },
             whiteRice = function(previous, baton) { result.push("whiteRice") },
@@ -206,6 +206,47 @@ $(document).ready(function () {
             start();
             same(result, ["garlicChicken", "whiteRice", "wontonSoup", "cookiesFortune", "noAndThen", "noAndThen"], "expected functions to be called in order");
         });
+    });
+
+    test("jWorkflow: we can give context for the function passed to andThen", function () {
+        expect(1);
+
+        var zoltan = {
+                toMyParentsMinivan: function() {
+                    ok(this.getCultMembers, "expected to be able to get the cult members");
+                },
+
+                getCultMembers: function() {
+                    return ["Zarnoff", "Zabu", "Zellnor", "Zelbor", "Zelmina", "Jeff"];
+                }
+            },
+            order = jWorkflow.order(zoltan.toMyParentsMinivan, zoltan);
+
+        order.start();
+    });
+
+    test("jWorkflow, we can pass in a different context for each function", function() {
+        expect(2);
+        
+        var jesse = { 
+                smokeyMcPot: true,
+                test: function () {
+                    ok(this.smokeyMcPot, "I should be SmokeyMcPot");
+                }
+            },
+            chester = {
+                johnnyPotsmoker: true,
+                test: function () {
+                    ok(this.johnnyPotsmoker, "I should be Johnny Potsmoker");
+                }
+            },
+            order = jWorkflow.order(jesse.test, jesse)
+                             .andThen(chester.test, chester);
+
+         
+        order.start();
+
+
     });
 
 });
