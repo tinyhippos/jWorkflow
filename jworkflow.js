@@ -63,7 +63,7 @@ var jWorkflow = (function () {
                     }
                 };
 
-                return self.andThen(func, context);
+                return func ? self.andThen(func, context) : self;
         }
     };
 

@@ -25,6 +25,9 @@ jWorkflow orders are started with a call to jWorkflow.order:
 
     var order = jWorkflow.order(dude);
 
+    // orders can also be started with no initial function
+    var pizzacoli = jWorkflow.order();
+
 jWorkflow tasks at the root are just functions that will be invoked in the order they are built.
 Any number of tasks can be then appended to the order:
 

@@ -249,4 +249,27 @@ $(document).ready(function () {
 
     });
 
+    test("jWorkflow, we can pass null into order", function() {
+        expect(1);
+
+        var order = jWorkflow.order();
+
+        ok(order, "expected to have an order when not passing in an initial function");
+    });
+
+    test("jWorkflow, we can NOT pass null into andThen", function() {
+        expect(1);
+        var errored = false,
+            order = jWorkflow.order();
+
+        try {
+            order.andThen();
+        } 
+        catch (ex) {
+            errored = true;
+        }
+
+        ok(errored, "expected an exception when calling andThen with no order");
+    });
+
 });
