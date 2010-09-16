@@ -10,27 +10,26 @@ var jWorkflow = (function () {
     }
 
     var transfunctioner =  {
-        
         order: function (func, context) {
             var _tasks = [],
                 _callback,
-                _baton = (function() {
+                _baton = (function () {
                     var _taken = false; 
-                    var _callback = null;
+                    _callback = null;
                     return {
 
-                        take: function() {
+                        take: function () {
                             _taken = true;
                         },
 
-                        pass: function() {
+                        pass: function () {
                             var result, task;
                             _taken = false;
 
-                            while(_tasks.length) {
+                            while (_tasks.length) {
                                 task = _tasks.shift();
                                 result = task.func.apply(task.context, [result, _baton]);
-                                if(_baton.taken()) {
+                                if (_baton.taken()) {
                                     return;
                                 }
                             }
@@ -40,12 +39,12 @@ var jWorkflow = (function () {
                             }
                         },
 
-                        start: function(callback) {
+                        start: function (callback) {
                             _callback = callback;
                             _baton.pass();
                         },
 
-                        taken: function() {
+                        taken: function () {
                             return _taken;
                         }
                     };
@@ -63,9 +62,9 @@ var jWorkflow = (function () {
                     }
                 };
 
-                return self.andThen(func, context);
+            return self.andThen(func, context);
         }
     };
 
     return transfunctioner;
-})();
+}());
