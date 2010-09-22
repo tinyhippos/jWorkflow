@@ -75,11 +75,17 @@ baton that is passed to the task
         }, 1000);
     }
 
-the start method also provides a callback to execute when the workflow is finished:
+the start method provides a callback to execute when the workflow is finished:
 
    order.start(function() {
        console.log("dude!, your car is behind that mail truck!");
    }
+
+you can also pass context to use for the callback:
+
+   order.start(function() {
+       //do stuff
+   }, transfunctioner);
     
 
 =Contributers:

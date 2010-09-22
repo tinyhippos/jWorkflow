@@ -12,10 +12,9 @@ var jWorkflow = (function () {
     var transfunctioner =  {
         order: function (func, context) {
             var _tasks = [],
-                _callback,
+                _callback = null,
                 _baton = (function () {
                     var _taken = false; 
-                    _callback = null;
                     return {
 
                         take: function () {
@@ -29,23 +28,14 @@ var jWorkflow = (function () {
                             while (_tasks.length) {
                                 task = _tasks.shift();
                                 result = task.func.apply(task.context, [result, _baton]);
-                                if (_baton.taken()) {
+                                if (_taken) {
                                     return;
                                 }
                             }
 
-                            if (_tasks.length < 1 && _callback) {
-                                _callback.apply();
+                            if (_tasks.length < 1 && _callback.func) {
+                                _callback.func.apply(_callback.context, []);
                             }
-                        },
-
-                        start: function (callback) {
-                            _callback = callback;
-                            _baton.pass();
-                        },
-
-                        taken: function () {
-                            return _taken;
                         }
                     };
                 }()),
@@ -57,12 +47,13 @@ var jWorkflow = (function () {
                         return self;
                     },
 
-                    start: function (callback) {
-                        _baton.start(callback);
+                    start: function (callback, context) {
+                        _callback = {func: callback, context: context};
+                        _baton.pass();
                     }
                 };
 
-                return func ? self.andThen(func, context) : self;
+            return func ? self.andThen(func, context) : self;
         }
     };
 

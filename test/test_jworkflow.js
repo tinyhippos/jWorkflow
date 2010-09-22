@@ -249,6 +249,20 @@ $(document).ready(function () {
 
     });
 
+    test("jWorkflow: we can pass context into start", function() {
+        expect(1);
+
+        var jesse = { 
+                smokeyMcPot: true,
+                test: function () {
+                    ok(this.smokeyMcPot, "I should be SmokeyMcPot");
+                }
+            },
+            order = jWorkflow.order();
+
+        order.start(jesse.test, jesse);
+    });
+
     test("jWorkflow, we can pass null into order", function() {
         expect(1);
 
