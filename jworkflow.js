@@ -21,20 +21,22 @@ var jWorkflow = (function () {
                             _taken = true;
                         },
 
-                        pass: function () {
-                            var result, task;
+                        pass: function (result) {
+                            var task;
                             _taken = false;
 
-                            while (_tasks.length) {
+                            if (_tasks.length) {
                                 task = _tasks.shift();
                                 result = task.func.apply(task.context, [result, _baton]);
-                                if (_taken) {
-                                    return;
+
+                                if (!_taken) {
+                                    _baton.pass(result);
                                 }
                             }
-
-                            if (_tasks.length < 1 && _callback.func) {
-                                _callback.func.apply(_callback.context, []);
+                            else { 
+                                if (_callback.func) {
+                                    _callback.func.apply(_callback.context, []);
+                                }
                             }
                         }
                     };

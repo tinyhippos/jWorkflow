@@ -75,6 +75,26 @@ baton that is passed to the task
         }, 1000);
     }
 
+If you want to pass a return value to the next task you can pass it along with the
+baton.
+
+NOTE: if you did take the baton, the return value from your function will NOT be passed to 
+the next task:
+
+    function awesometown(previous, baton) {
+        baton.take();
+
+        window.setTimeout(function() {
+            
+            //do stuff
+            
+            baton.pass(420);    //This value will be passed to the next task
+        }, 100);
+
+        return 50; // this will NOT be passed to the next function since you took the baton.
+    }
+
+
 the start method provides a callback to execute when the workflow is finished:
 
    order.start(function() {

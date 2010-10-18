@@ -286,4 +286,28 @@ $(document).ready(function () {
         ok(errored, "expected an exception when calling andThen with no order");
     });
 
+    asyncTest("jWorkflow, we can pass a return value from an async function into a sync function via the baton", function () {
+        expect(1);
+       
+        var correct,
+            was,
+            order = jWorkflow.order(function (previous, baton) {
+                baton.take();
+                setTimeout(function () {
+                    baton.pass(420);
+                }, 10);
+
+                return 11;
+
+            }).andThen(function (answer) {
+                was = answer;
+                correct = answer === 420;
+            });
+
+            order.start(function () {
+                start();
+                ok(correct, "expected it to be 420 but was " + was);
+            });
+    });
+
 });
