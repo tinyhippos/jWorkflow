@@ -310,4 +310,21 @@ $(document).ready(function () {
             });
     });
 
+    asyncTest("jWorkflow, we can reuse an order", function () {
+        expect(1);
+
+        var sheep_teleported = 0,
+            teleport = function() {
+                sheep_teleported += 1;
+            },
+            order = jWorkflow.order(teleport).andThen(teleport);
+
+
+        order.start(function () {
+            order.start(function() {
+                start();
+                equals(sheep_teleported, 4, "expected to teleport 4 sheep");
+            });
+        });
+    });
 });
