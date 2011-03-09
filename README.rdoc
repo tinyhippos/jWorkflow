@@ -15,6 +15,18 @@ create workflows to chain methods together in an easy to understand syntax:
 
     fooodOrder.start();
 
+=Install
+
+jWorkflow can be used in node or included in the browser.  It can be installed with npm
+
+    npm install jWorkflow
+
+and used
+
+    var jWorkflow = require("jWorkflow");
+
+or just include jWorkflow.js in your webpage and use window.jWorkflow.
+
 =Usage
 
 jWorkflow orders are started with a call to jWorkflow.order:
