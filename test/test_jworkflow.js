@@ -1,13 +1,13 @@
 $(document).ready(function () {
     module("jWorkflow ordering and starting workflows");
 
-    test("jWorkflow: we can place an order", function() {
+    test("jWorkflow: we can place an order", function () {
         expect(1);
         var order = jWorkflow.order(function () {});
         ok(order, "we should have an order");
     });
 
-    test("jWorkflow: order throws an error when not given a function", function() {
+    test("jWorkflow: order throws an error when not given a function", function () {
         expect(1);
         var errored = false;
         try {
@@ -21,7 +21,7 @@ $(document).ready(function () {
 
     });
 
-    test("jWorkflow: we can call andThen on the return value of order", function() {
+    test("jWorkflow: we can call andThen on the return value of order", function () {
         expect(2);
 
         var transfunctioner = function () { },
@@ -31,12 +31,12 @@ $(document).ready(function () {
         equals(typeof(order.andThen), "function", "expected andThen to be a function");
     });
 
-    test("jWorkflow: andThen throws an error when not given a function", function() {
+    test("jWorkflow: andThen throws an error when not given a function", function () {
         expect(1);
 
         var errored = false;
         try {
-            jWorkflow.order(function() {}).andThen(42);
+            jWorkflow.order(function () {}).andThen(42);
         } 
         catch (ex) {
             errored = true;
@@ -46,14 +46,14 @@ $(document).ready(function () {
         
     });
 
-    test("jWorkflow: we can call andThen on the return value of andThen", function() {
+    test("jWorkflow: we can call andThen on the return value of andThen", function () {
         expect(2);
 
         var garlicChicken = function () {},
             whiteRice = function () {},
             wontonSoup = function () {},
             cookiesFortune = function () {},
-            noAndThen = function () {};
+            noAndThen = function () {},
             order = jWorkflow.order(garlicChicken)
                             .andThen(whiteRice)
                             .andThen(wontonSoup)
@@ -66,18 +66,22 @@ $(document).ready(function () {
 
     });
 
-    test("jWorkflow: it doesnt invoke the order function when start isnt called", function() {
+    test("jWorkflow: it doesnt invoke the order function when start isnt called", function () {
         var dude = true,
-            sweet = function () { sweet = false; },
+            sweet = function () { 
+                dude = false; 
+            },
             order = jWorkflow.order(sweet);
 
         ok(dude, "expected sweet to have not been invoked");
         
     });
 
-    test("jWorkflow: it calls the order function when start is called", function() {
+    test("jWorkflow: it calls the order function when start is called", function () {
         var dude = false,
-            sweet = function () { dude = true; },
+            sweet = function () { 
+                dude = true; 
+            },
             order = jWorkflow.order(sweet);
 
         order.start();
@@ -85,31 +89,45 @@ $(document).ready(function () {
         ok(dude, "expected sweet to have been invoked");
     });
 
-    asyncTest("jWorkflow: it can handle multiple orders without mixing them", function() {
-    expect(1);
+    asyncTest("jWorkflow: it can handle multiple orders without mixing them", function () {
+        expect(1);
         var dude = false,
             what = false,
-            sweet = function () { dude = true; },
-            whatup = function () { what = true; }
+            sweet = function () { 
+                dude = true; 
+            },
+            whatup = function () { 
+                what = true; 
+            },
             order = jWorkflow.order(sweet),
             order2 = jWorkflow.order(whatup);
 
 
-        order.start(function() {
+        order.start(function () {
             start();
             ok(what === false, "whatup shouldn't have been called");
         });
     });
 
-    test("jWorkflow: it calls the order in the order that it was built", function() {
+    test("jWorkflow: it calls the order in the order that it was built", function () {
         expect(1);
 
         var result = [], 
-            garlicChicken = function () { result.push("garlicChicken"); },
-            whiteRice = function () { result.push("whiteRice"); },
-            wontonSoup = function () { result.push("wontonSoup"); },
-            cookiesFortune = function () { result.push("cookiesFortune"); },
-            noAndThen = function () { result.push("noAndThen"); },
+            garlicChicken = function () { 
+                result.push("garlicChicken"); 
+            },
+            whiteRice = function () { 
+                result.push("whiteRice"); 
+            },
+            wontonSoup = function () { 
+                result.push("wontonSoup"); 
+            },
+            cookiesFortune = function () { 
+                result.push("cookiesFortune"); 
+            },
+            noAndThen = function () { 
+                result.push("noAndThen"); 
+            },
             order = jWorkflow.order(garlicChicken)
                             .andThen(whiteRice)
                             .andThen(wontonSoup)
@@ -122,18 +140,22 @@ $(document).ready(function () {
         same(["garlicChicken", "whiteRice", "wontonSoup", "cookiesFortune", "noAndThen", "noAndThen"], result, "expected functions to be called in order");
     });
 
-    test("jWorkflow: it get the return value of the previous func", function() {
+    test("jWorkflow: it get the return value of the previous func", function () {
 
-        var dude = function () { return 42; },
-            sweet = function(previous) { equals(previous, 42, "expected previous to be return value"); },
+        var dude = function () { 
+                return 42; 
+            },
+            sweet = function (previous) { 
+                equals(previous, 42, "expected previous to be return value"); 
+            },
             order = jWorkflow.order(dude).andThen(sweet);
 
         order.start();
 
     });
 
-    test("jWorkflow: we get a baton play with", function() {
-        var order = jWorkflow.order(function(previous, baton) {
+    test("jWorkflow: we get a baton play with", function () {
+        var order = jWorkflow.order(function (previous, baton) {
             ok(baton, "expected a baton");
             ok(baton.take, "expected to be able to take the baton");
             ok(baton.pass, "expected to be able to pass the baton");
@@ -143,14 +165,16 @@ $(document).ready(function () {
 
     });
 
-    test("jWorkflow: when I take the baton, the next methods are not called if I don't pass it", function() {
+    test("jWorkflow: when I take the baton, the next methods are not called if I don't pass it", function () {
         var transfunctioner = true,
-        dude = function() {},
-        sweet = function() {},
-        noAndThen = function(previous, baton) {
+        dude = function () {},
+        sweet = function () {},
+        noAndThen = function (previous, baton) {
             baton.take();
         },
-        fortuneCookie = function() { transfunctioner = false; },
+        fortuneCookie = function () { 
+            transfunctioner = false; 
+        },
         order = jWorkflow.order(dude).andThen(sweet).andThen(noAndThen).andThen(fortuneCookie);
 
         order.start();
@@ -158,43 +182,55 @@ $(document).ready(function () {
         ok(transfunctioner, "fortune Cookie should not have been called because we took the baton and didn't pass it");
     });
 
-    asyncTest("jWorkflow: when I take the baton and pass it async, the next methods are called", function() {
+    asyncTest("jWorkflow: when I take the baton and pass it async, the next methods are called", function () {
         expect(1);
         var transfunctioner = false,
-        dude = function() {},
-        sweet = function() {},
-        noAndThen = function(previous, baton) {
+        dude = function () {},
+        sweet = function () {},
+        noAndThen = function (previous, baton) {
             baton.take();
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 baton.pass();
             }, 10);
         },
-        fortuneCookie = function() { transfunctioner = true; },
+        fortuneCookie = function () { 
+            transfunctioner = true; 
+        },
         order = jWorkflow.order(dude).andThen(sweet).andThen(noAndThen).andThen(fortuneCookie);
 
-        order.start(function() {
+        order.start(function () {
             start();
             ok(transfunctioner, "fortune Cookie should have been called because we passed the baton");
         });
 
     });
 
-    asyncTest("jWorkflow: it calls the order in the order that it was built, even with Async calls", function() {
+    asyncTest("jWorkflow: it calls the order in the order that it was built, even with Async calls", function () {
         expect(1);
 
         var result = [], 
-            procrastinate = function(msg, baton) { 
+            procrastinate = function (msg, baton) { 
                 baton.take();
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     result.push(msg); 
                     baton.pass();
                 }, 10);
             },
-            garlicChicken = function (previous, baton) { procrastinate("garlicChicken", baton); },
-            whiteRice = function(previous, baton) { result.push("whiteRice") },
-            wontonSoup = function (previous, baton) { procrastinate("wontonSoup", baton); },
-            cookiesFortune = function (previous, baton) { result.push("cookiesFortune"); },
-            noAndThen = function (previous, baton) { procrastinate("noAndThen", baton); },
+            garlicChicken = function (previous, baton) { 
+                procrastinate("garlicChicken", baton); 
+            },
+            whiteRice = function (previous, baton) { 
+                result.push("whiteRice");
+            },
+            wontonSoup = function (previous, baton) { 
+                procrastinate("wontonSoup", baton); 
+            },
+            cookiesFortune = function (previous, baton) { 
+                result.push("cookiesFortune"); 
+            },
+            noAndThen = function (previous, baton) { 
+                procrastinate("noAndThen", baton); 
+            },
             order = jWorkflow.order(garlicChicken)
                             .andThen(whiteRice)
                             .andThen(wontonSoup)
@@ -202,7 +238,7 @@ $(document).ready(function () {
         
         order.andThen(noAndThen).andThen(noAndThen);
 
-        order.start(function() {
+        order.start(function () {
             start();
             same(result, ["garlicChicken", "whiteRice", "wontonSoup", "cookiesFortune", "noAndThen", "noAndThen"], "expected functions to be called in order");
         });
@@ -212,11 +248,11 @@ $(document).ready(function () {
         expect(1);
 
         var zoltan = {
-                toMyParentsMinivan: function() {
+                toMyParentsMinivan: function () {
                     ok(this.getCultMembers, "expected to be able to get the cult members");
                 },
 
-                getCultMembers: function() {
+                getCultMembers: function () {
                     return ["Zarnoff", "Zabu", "Zellnor", "Zelbor", "Zelmina", "Jeff"];
                 }
             },
@@ -225,7 +261,7 @@ $(document).ready(function () {
         order.start();
     });
 
-    test("jWorkflow, we can pass in a different context for each function", function() {
+    test("jWorkflow, we can pass in a different context for each function", function () {
         expect(2);
         
         var jesse = { 
@@ -249,7 +285,7 @@ $(document).ready(function () {
 
     });
 
-    test("jWorkflow: we can pass context into start", function() {
+    test("jWorkflow: we can pass context into start", function () {
         expect(1);
 
         var jesse = { 
@@ -263,7 +299,7 @@ $(document).ready(function () {
         order.start(jesse.test, jesse);
     });
 
-    test("jWorkflow, we can pass null into order", function() {
+    test("jWorkflow, we can pass null into order", function () {
         expect(1);
 
         var order = jWorkflow.order();
@@ -271,7 +307,7 @@ $(document).ready(function () {
         ok(order, "expected to have an order when not passing in an initial function");
     });
 
-    test("jWorkflow, we can NOT pass null into andThen", function() {
+    test("jWorkflow, we can NOT pass null into andThen", function () {
         expect(1);
         var errored = false,
             order = jWorkflow.order();
@@ -304,27 +340,41 @@ $(document).ready(function () {
                 correct = answer === 420;
             });
 
-            order.start(function () {
-                start();
-                ok(correct, "expected it to be 420 but was " + was);
-            });
+        order.start(function () {
+            start();
+            ok(correct, "expected it to be 420 but was " + was);
+        });
     });
 
     asyncTest("jWorkflow, we can reuse an order", function () {
         expect(1);
 
         var sheep_teleported = 0,
-            teleport = function() {
+            teleport = function () {
                 sheep_teleported += 1;
             },
             order = jWorkflow.order(teleport).andThen(teleport);
 
 
         order.start(function () {
-            order.start(function() {
+            order.start(function () {
                 start();
                 equals(sheep_teleported, 4, "expected to teleport 4 sheep");
             });
+        });
+    });
+
+    asyncTest("jWorkflow, we can chill for a little bit between tasks", function () {
+        var time = [],
+            inhale = function () {
+                time.push(new Date());
+            },
+            exhale = inhale;
+
+        jWorkflow.order(inhale).chill(100).andThen(exhale).start(function () {
+            start();
+            var chilled = time[1] - time[0];
+            ok(chilled > 50, "expected to chill a little bit between tasks: " + chilled);
         });
     });
 });

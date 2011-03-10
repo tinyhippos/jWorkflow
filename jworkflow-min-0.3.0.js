@@ -1,2 +1,0 @@
-var jWorkflow=function(){return{order:function(h,j){var i=[],d,c=null,f=function(){var a=false;return{take:function(){a=true},pass:function(b){var e;a=false;if(d.length){e=d.shift();b=e.func.apply(e.context,[b,f]);a||f.pass(b)}else c.func&&c.func.apply(c.context,[])}}}(),g={andThen:function(a,b){if(typeof a!=="function")throw"expected function but was "+typeof a;i.push({func:a,context:b});return g},start:function(a,b){c={func:a,context:b};d=i.slice();f.pass()}};return h?g.andThen(h,j):g}}}();
-if(exports)module.exports=jWorkflow;
