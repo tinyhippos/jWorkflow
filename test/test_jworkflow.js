@@ -377,4 +377,58 @@ $(document).ready(function () {
             ok(chilled > 50, "expected to chill a little bit between tasks: " + chilled);
         });
     });
+
+    test("jWorkflow, it passes the final result to the callback passed to start", function () {
+        expect(1);
+        var plus1 = function (prev) {
+                return prev + 1;
+            };
+
+        jWorkflow.order(function () {
+                    return 0;
+                 })
+                 .andThen(plus1)
+                 .andThen(plus1)
+                 .start(function (result) {
+                     equals(2, result);
+                 });
+    });
+
+    test("jWorkflow, we can pass the initial value into start", function () {
+        expect(1);
+
+        jWorkflow.order().andThen(function (prev) {
+            equals(5, prev);
+        }).start({
+            initialValue: 5
+        });
+    });
+
+    asyncTest("jWorkflow, we can pass another workflow into andThen", function () {
+        expect(1);
+       
+        var plus1 = function (prev) {
+                return prev + 1;
+            },
+            plus4 = function (prev, baton) {
+                baton.take();
+                setTimeout(function () {
+                    baton.pass(prev + 4);
+                }, 10);
+            }
+            addTen = jWorkflow.order(plus4).andThen(plus1).andThen(plus4).andThen(plus1),
+            addFive = jWorkflow.order(plus4).andThen(plus1);
+
+        jWorkflow.order()
+                 .andThen(addTen)
+                 .andThen(addTen)
+                 .andThen(addFive)
+                 .start({
+                    callback: function (result) {
+                        start();
+                        equals(result, 25);
+                    },
+                    initialValue: 0
+                 });
+    });
 });

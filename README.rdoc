@@ -53,6 +53,12 @@ The context to be used when invoking the functions can be passed in while creati
 
     order.andThen(transfunctioner.photonAcceleratorAnnihilationBeam, transfunctioner);
 
+An initial value can be passed into the start method to seed the first function:
+
+    order.start({
+        initialValue: 10
+    });
+
 =Passing Values between tasks
 
 jWorkflow tasks can access the return value of the previous task with the previous parameter:
@@ -107,17 +113,24 @@ the next task:
     }
 
 
-the start method provides a callback to execute when the workflow is finished:
+the start method provides a callback to execute when the workflow is finished.  The final
+return value is also passed to the callback:
 
-   order.start(function() {
-       console.log("dude!, your car is behind that mail truck!");
-   }
+   order.start({
+       callback: function(review) {
+               console.log("dude!, your car is behind that mail truck!");
+               expect(review).toBe("two thumbs up");
+       }
+   });
 
 you can also pass context to use for the callback:
 
-   order.start(function() {
-       //do stuff
-   }, transfunctioner);
+   order.start({
+       callback: function() {
+           //do stuff
+       }, 
+       context: transfunctioner
+   });
     
 =Waiting between tasks
 
