@@ -144,6 +144,14 @@ If you ever need to take a break and reflect on the moment you can add some time
              .chill(1000)
              .andThen(freakOut);
 
+=Handling Parallel tasks
+
+If you need to handle some tasks and don't care about when they are done you can pass in an array of functions and / or other workflows to execute
+at the same time.
+
+    jWorkflow.order([man, man, halfMan])
+             .andThen([jWorkflow.order([guy, guy]).andThen(girl), pizzaPlace]);
+
 =Contributers:
 
     Gord Tanner <gord@tinyhippos.com>

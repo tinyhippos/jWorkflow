@@ -415,7 +415,7 @@ $(document).ready(function () {
                 setTimeout(function () {
                     baton.pass(prev + 4);
                 }, 10);
-            }
+            },
             addTen = jWorkflow.order(plus4).andThen(plus1).andThen(plus4).andThen(plus1),
             addFive = jWorkflow.order(plus4).andThen(plus1);
 
@@ -429,6 +429,63 @@ $(document).ready(function () {
                         equals(result, 25);
                     },
                     initialValue: 0
+                 });
+    });
+
+    asyncTest("jWorkflow, we can pass an array of functions into andThen", function () {
+        expect(1);
+
+        var x = "",
+            w = function (letter, delay) {
+                return function (prev, baton) {
+                    if (delay) {
+                        baton.take();
+                        window.setTimeout(function () {
+                            x += letter;
+                            baton.pass();
+                        }, delay);
+                    }
+                    else {
+                        x += letter;
+                    }
+                };
+            };
+
+        jWorkflow.order(w("d"))
+                 .andThen([w("U", 100), w("u", 10), w("u")])
+                 .andThen(w("de"))
+                 .start(function () {
+                     start();
+                     equals(x, "duuUde");
+                 });
+
+    });
+
+    asyncTest("jWorkflow, we can pass an array of workflows into andThen", function () {
+        expect(1);
+
+        var x = "",
+            w = function (letter, delay) {
+                return function (prev, baton) {
+                    if (delay) {
+                        baton.take();
+                        window.setTimeout(function () {
+                            x += letter;
+                            baton.pass();
+                        }, delay);
+                    }
+                    else {
+                        x += letter;
+                    }
+                };
+            };
+
+        jWorkflow.order(jWorkflow.order(w("s")))
+                 .andThen([jWorkflow.order(w("w", 1)).andThen(w("e")), jWorkflow.order(w("e", 30))])
+                 .andThen(w("et"))
+                 .start(function () {
+                     start();
+                     equals(x, "sweeet");
                  });
     });
 });

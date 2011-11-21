@@ -7,6 +7,6 @@ desc "Use the Closure Compiler to compress jWorkflow.js"
 task :build do
   js  = File.open('lib/jWorkflow.js', 'r')
   min = Closure::Compiler.new.compile(js)
-  File.open('jworkflow-min-0.5.0.js', 'w') {|f| f.write(min) }
+  File.open('jworkflow-min-0.6.0.js', 'w') {|f| f.write(min) }
 end
 
