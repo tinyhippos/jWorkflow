@@ -488,4 +488,34 @@ $(document).ready(function () {
                      equals(x, "sweeet");
                  });
     });
+
+    asyncTest("jWorkflow, we can stop execution of a workflow with baton.drop", function () {
+        expect(2);
+
+        var inc = function (prev, baton) {
+                if (prev >= 3) {
+                    baton.drop(prev);
+                }
+                return ++prev;
+            },
+            protected = false;
+
+        jWorkflow.order(inc)
+                 .andThen(inc)
+                 .andThen(inc)
+                 .andThen(inc)
+                 .andThen(inc)
+                 .andThen(inc)
+                 .andThen(function (prev) {
+                     protected = true;
+                     return prev;
+                 }).start({
+                     initialValue: 0,
+                     callback: function (result) {
+                         start();
+                         equals(protected, false);
+                         equals(result, 3);
+                     }
+                 });
+    });
 });

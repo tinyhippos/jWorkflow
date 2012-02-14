@@ -152,6 +152,19 @@ at the same time.
     jWorkflow.order([man, man, halfMan])
              .andThen([jWorkflow.order([guy, guy]).andThen(girl), pizzaPlace]);
 
+=Canceling Workflows
+
+To cancel the execution of the workflow you can call the drop method on the baton:
+
+    function (previous, baton) {
+        //the value passed to drop will be passed onto the final callback if it exists
+        baton.drop("I dropped the soap");
+        //this value will NOT be passed to the next workflow step
+        return 10;
+    }
+
+NOTE: This will force the workflow into async mode.
+
 =Contributers:
 
     Gord Tanner <gord@tinyhippos.com>
