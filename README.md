@@ -1,4 +1,4 @@
-=jWorkflow
+# jWorkflow
 Dude, where is my workflow?
 
 jWorkflow is a workflow engine for JavaScript that provides the ability to
@@ -15,7 +15,7 @@ create workflows to chain methods together in an easy to understand syntax:
 
     fooodOrder.start();
 
-=Install
+# Install
 
 jWorkflow can be used in node or included in the browser.  It can be installed with npm
 
@@ -27,7 +27,7 @@ and used
 
 or just include jWorkflow.js in your webpage and use window.jWorkflow.
 
-=Usage
+# Usage
 
 jWorkflow orders are started with a call to jWorkflow.order:
 
@@ -59,7 +59,7 @@ An initial value can be passed into the start method to seed the first function:
         initialValue: 10
     });
 
-=Passing Values between tasks
+# Passing Values between tasks
 
 jWorkflow tasks can access the return value of the previous task with the previous parameter:
 
@@ -75,7 +75,7 @@ jWorkflow tasks can access the return value of the previous task with the previo
     var guide = jWorkflow.order(meaningOfLife).andThen(writeBook);
     guide.start();
 
-=Handling Async calls
+# Handling Async calls
 
 Sometimes(probably all the time) you will need to do something async when working with
 tasks, jWorkflow provides the ability to control the execution of the workflow via a
@@ -132,7 +132,7 @@ you can also pass context to use for the callback:
        context: transfunctioner
    });
     
-=Waiting between tasks
+# Waiting between tasks
 
 If you ever need to take a break and reflect on the moment you can add some time(in ms) to chill between tasks:
 
@@ -144,7 +144,7 @@ If you ever need to take a break and reflect on the moment you can add some time
              .chill(1000)
              .andThen(freakOut);
 
-=Handling Parallel tasks
+# Handling Parallel tasks
 
 If you need to handle some tasks and don't care about when they are done you can pass in an array of functions and / or other workflows to execute
 at the same time.
@@ -152,7 +152,7 @@ at the same time.
     jWorkflow.order([man, man, halfMan])
              .andThen([jWorkflow.order([guy, guy]).andThen(girl), pizzaPlace]);
 
-=Canceling Workflows
+# Canceling Workflows
 
 To cancel the execution of the workflow you can call the drop method on the baton:
 
@@ -165,6 +165,6 @@ To cancel the execution of the workflow you can call the drop method on the bato
 
 NOTE: This will force the workflow into async mode.
 
-=Contributers:
+# Contributers:
 
-    Gord Tanner <gord@tinyhippos.com>
+    Gord Tanner <gtanner@gmail.com>
