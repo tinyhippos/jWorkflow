@@ -2,7 +2,7 @@
   "name": "jsFlow",
   "version" : "0.9.0",
   "description" : "dude, wheres my workflow?",
-  "homepage": "https://github.com/Tapsi/jWorkflow",
+  "homepage": "https://github.com/Tapsi/jsFlow",
   "author": "Tapsi",
   "contributors": [
     {
@@ -14,6 +14,5 @@
   "licenses": [{
     "type": "MIT",
     "url" : ""
-  }],
-  "main": "./lib/jWorkflow"
+  }]
 }
