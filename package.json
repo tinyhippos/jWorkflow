@@ -1,14 +1,16 @@
 {
-  "name": "jWorkflow",
-  "version" : "0.8.0",
+  "name": "jsFlow",
+  "version" : "0.9.0",
   "description" : "dude, wheres my workflow?",
-  "homepage": "https://github.com/tinyhippos/jWorkflow",
-  "author": "gtanner",
-  "contributors": [{
-    "name": "Gord Tanner",
-    "email": "gtanner@gmail.com",
-    "url": "http://github.com/gtanner"
-  }],
+  "homepage": "https://github.com/Tapsi/jWorkflow",
+  "author": "Tapsi",
+  "contributors": [
+    {
+      "name": "Radom Alexander [BlackCat]",
+      "email": "blackcat.myako@gmail.com",
+      "url": "https://github.com/Tapsi"
+    }
+  ],
   "licenses": [{
     "type": "MIT",
     "url" : ""

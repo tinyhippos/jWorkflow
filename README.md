@@ -164,7 +164,3 @@ To cancel the execution of the workflow you can call the drop method on the bato
     }
 
 NOTE: This will force the workflow into async mode.
-
-# Contributers:
-
-    Gord Tanner <gtanner@gmail.com>
