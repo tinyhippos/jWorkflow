@@ -1,7 +1,5 @@
 module.exports = function(grunt) {
 
-	var VERSION = "0-9-0";
-	
   grunt.initConfig({
     	
 		qunit-minimalist: {
@@ -19,7 +17,7 @@ module.exports = function(grunt) {
     uglify: {
       my_target: {
         files: {
-          'dist/isMobile_'+VERSION+'_min.js': ['lib/jsFlow.js']
+          'dist/isMobile_0-9-0_min.js': ['lib/jsFlow.js']
         }
       }
     }
