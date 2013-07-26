@@ -9,6 +9,8 @@
     * [Creating a Flow Description](#creating-a-flow-description)
     * [Finalize a Flow Description](#finalize-a-flow-description)
     * [Creating a Flow Instance](#creating-a-flow-instance)
+    * [Custom Instance Context](#custom-instance-context)
+    * [Custom Step Context](#custom-step-context)
     * [Passing Values](#passing-values)
     * [Initial Value](#initial-value)
     * [Handling Async Calls](#handling-async-calls)
@@ -130,6 +132,16 @@ Every flow instance can get a custom context object. Every flow step will be cal
     // this can be asserted
     equal( ctx1.x , 1 );
     equal( ctx2.x , 11 );
+
+### Custom Instance Context
+
+Beside of the instance context you're able to define a task context. Regardless of the instance context when a step has a custom context defined then it will always invoked with that context as `this` object.
+
+    flow.step( function(){
+      // this resolves to fnCtx not ctxA
+    }, fnCtx );
+   
+    flow.start( ctxA );
 
 ### Initial Value
 
