@@ -189,20 +189,20 @@ If you want to pass a return value to the next task you can pass it along with t
 ### Final Callback
 
 With a finalizer you can react to the completed event of the flow. You can define it in the start method by passing it into the options object or as callback parameter.  
-  
-   function finalCB( previous ) {
-      // do something 
-   }
-
-   // start flow with callback
-   flow.start({ callback: finalCB });
-   flow.start( finalCB );
+     
+    function finalCB( previous ) {
+       // do something 
+    }
+ 
+    // start flow with callback
+    flow.start({ callback: finalCB });
+    flow.start( finalCB );
   
 The finalizer will be called with the context that is passed into start.  
   
-   // start flow with callback and instance context
-   flow.start({ context: myCtx, callback: finalCB });
-   flow.start( finalCB, myCtx );
+    // start flow with callback and instance context
+    flow.start({ context: myCtx, callback: finalCB });
+    flow.start( finalCB, myCtx );
 
 ### Waiting
 
