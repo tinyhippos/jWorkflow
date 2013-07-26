@@ -133,7 +133,7 @@ Every flow instance can get a custom context object. Every flow step will be cal
     equal( ctx1.x , 1 );
     equal( ctx2.x , 11 );
 
-### Custom Instance Context
+### Custom Step Context
 
 Beside of the instance context you're able to define a task context. Regardless of the instance context when a step has a custom context defined then it will always invoked with that context as `this` object.
 
