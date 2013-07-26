@@ -267,10 +267,10 @@ This is a cryptic code that isn't easy to read. Furthermore you get an overhead 
    
     flow
       .step( function( prev, baton ){ 
-          this.x += i;
+          this.x += this.i;
          
-          i++;
-          if( i<10 ) baton.revise();
+          this.i++;
+          if( this.i<10 ) baton.revise();
       })
       .start( ... );
        
