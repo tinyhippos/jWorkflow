@@ -24,7 +24,7 @@
 
 ## About jsFlow
 
-jsFlow is a fork of [jWorkflow from tinyhippos](https://github.com/tinyhippos/jWorkflow). It's primary task is to provide a read- and chainable API for JavaScript to create modular, reusable workflows. 
+jsFlow is a fork of [jWorkflow from tinyhippos](https://github.com/tinyhippos/jWorkflow). It's a very fast and small library ( 2KB minified ) that provides an easy to read, chainable API for creating modular and reusable workflows in JavaScript. 
 
 
 ## Getting Started
@@ -33,7 +33,7 @@ jWorkflow can be used in node or included in the browser. Simply put it into you
 
 ### NodeJS
 
-    var jsFlow = require("jsFlow");
+    var jsFlow = require("jsFlow").jsFlow;
     var flow   = jsFlow();
     
 ### Webbrowser
@@ -51,7 +51,11 @@ jsFlow is 100% API compatible to jWorkflow. This means if you want to port one o
 
     var JSFLOW_JWORKFLOW_API_COMPATIBLE_MODE = true; 
 
-**Note:** `JSFLOW_JWORKFLOW_API_COMPATIBLE_MODE` must be available in the window object of your browser. API compability is not supported for Nodejs environments at the moment ( *support in the next version* ).
+**Note:** `JSFLOW_JWORKFLOW_API_COMPATIBLE_MODE` must be available in the window object of your browser. API compability is always enabled for Nodejs environments. You simply have to wrap your require call like the following...
+
+		var jWorkflow = require("jsFlow.js").jWorkflow;
+		
+		jWorkflow.order( ... ).andThen( ... ).start( ... );
 
 The following calls will be available in your environment which creates the complete API compability.
     
