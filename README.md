@@ -220,30 +220,30 @@ If you ever need to take a break and reflect on the moment you can add some time
 
 You can pass other flows as a step into a flow. 
 
-   flow.step( fn )
-       .andThen( anotherFlow );
+    flow.step( fn )
+        .andThen( anotherFlow );
 
 ### Revise Steps
 
 Sometimes you have steps that needs to be done several time. One solution is to create the steps as closures.
 
-   function createStep( i ){
+    function createStep( i ){
       return function( p, b ){
          this.x += i;
       }
-   }
+    }
    
-   for( var i=1; i<10; i++ ) flow.step( createStep(i) );
+    for( var i=1; i<10; i++ ) flow.step( createStep(i) );
    
 This is a cryptic code that isn't easy to read. Furthermore you get an overhead by creating a lot of functions. jsFlow gives you the `revise` function that allows you to repeat the actual step. Beside of that `revise` works like `pass`.
 
-   var myCtx = { x:0, i:1 };
+    var myCtx = { x:0, i:1 };
    
-   flow.step( function( prev, baton ){ 
+    flow.step( function( prev, baton ){ 
          this.x += i;
          if( i<10 ) baton.revise();
-       })
-       .start({ context: myCtx });
+        })
+        .start({ context: myCtx });
        
 This function is very usable for tasks that doing something in relation to a list of objects ( **like loading images** ).
 
