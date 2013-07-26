@@ -260,7 +260,7 @@ This is a cryptic code that isn't easy to read. Furthermore you get an overhead 
       })
       .start( ... );
        
-This function is very usable for tasks that doing something in relation to a list of objects ( **like loading images** ).
+This function is very usable for tasks that doing something in relation to a list of objects ( *like loading images* ). **Note:** At the moment the revise calls gets stacked because the invoking step invokes the next steps. This means the number of revises per step are limited to the depth of the function call stack of the underlying javaScript environment.
 
 
 ### Parallel Steps
