@@ -1,115 +1,161 @@
-# jWorkflow
-Dude, where is my workflow?
+# Documentation - Content
 
-jWorkflow is a workflow engine for JavaScript that provides the ability to
-create workflows to chain methods together in an easy to understand syntax:
+* [About jsFlow](#about-jsflow)
+* [Getting Started](#getting-started)
+    * [NodeJS](#nodejs)
+    * [Webbrowser](#webbrowser)
+* [Compability to jWorkflow](#compability-to-jworkflow)
+* [Usage](#usage)
+    * [Creating a Flow Description](#creating-a-flow-description)
+    * [Finalize a Flow Description](#finalize-a-flow-description)
+    * [Creating a Flow Instance](#creating-a-flow-instance)
 
-    var fooodOrder = jWorkflow.order(garlicChicken)
-                              .andThen(whiteRice)
-                              .andThen(wontonSoup)
-                              .andThen(cookiesFortune)
-                              .andThen(noAndThen)
-                              .andThen(noAndThen)
-                              .andThen(noAndThen)
-                              .andThen(noAndThen);
 
-    fooodOrder.start();
+## About jsFlow
 
-# Install
+jsFlow is a fork of [jWorkflow from tinyhippos](https://github.com/tinyhippos/jWorkflow). It's primary task is to provide a read- and chainable API for JavaScript to create modular, reusable workflows. 
 
-jWorkflow can be used in node or included in the browser.  It can be installed with npm
 
-    npm install jWorkflow
+## Getting Started
 
-and used
+jWorkflow can be used in node or included in the browser. Simply put it into your workspace and load it via the correct loading algorithm ( according to your environment ).
 
-    var jWorkflow = require("jWorkflow");
+### NodeJS
 
-or just include jWorkflow.js in your webpage and use window.jWorkflow.
+    var jsFlow = require("jsFlow");
+    var flow   = jsFlow();
+    
+### Webbrowser
 
-# Usage
+    <script type="text/javascript" src="../dist/jsFlow.min.js"></script>
+    
+    <script>
+        var flow   = jsFlow();
+    </script>
 
-jWorkflow orders are started with a call to jWorkflow.order:
 
-    function dude() {
-        // some of the best code in the world will live here
-    }
+## Compability to jWorkflow
 
-    var order = jWorkflow.order(dude);
+jsFlow is 100% API compatible to jWorkflow. This means if you want to port one of your programs that used jWorkflow then you do not have to change your code. Simply put the following line into your page before the line where you load jsFlow.
 
-    // orders can also be started with no initial function
-    var pizzacoli = jWorkflow.order();
+    var JSFLOW_JWORKFLOW_API_COMPATIBLE_MODE = true; 
 
-jWorkflow tasks at the root are just functions that will be invoked in the order they are built.
-Any number of tasks can be then appended to the order:
+**Note:** `JSFLOW_JWORKFLOW_API_COMPATIBLE_MODE` must be available in the window object of your browser. API compability is not supported for Nodejs environments at the moment ( *support in the next version* ).
 
-    order.andThen(sweet).andThen(dude).andThen(sweet);
+The following calls will be available in your environment which creates the complete API compability.
+    
+    jWorkflow; // is an empty helper object
+    
+    jWorkflow.order( fn ); // same as jsFlow().andThen( fn );
+    
 
-The functions passed into the order will not be invoked until you call:
+## Usage
 
-    order.start();
+This chapter gives you a small set of information about the features of jsFlow and how you can use them. If the variable is `flow` is used in one of the examples below without being declared in the same code block then `flow` represents a complete flow description. An expample how the variable `flow` could be defined are shown in the code block belo.
+    
+    var flow = jsFlow().step(doSomething).finalize();
+    
 
-The context to be used when invoking the functions can be passed in while creating the order:
+### Creating a Flow Description
 
-    order.andThen(transfunctioner.photonAcceleratorAnnihilationBeam, transfunctioner);
+Every flow needs a description that defines the single steps of the flow. A new description will be created by the `jsFlow` function.
 
-An initial value can be passed into the start method to seed the first function:
+    var flow = jsFlow();
+    
+Steps can be added by the `step` function. The call of the function is chainable because it returns always the flow description object. All steps are evaluated in a sequential order.
 
-    order.start({
-        initialValue: 10
+    flow.step(function(){
+            // a: do something first       
+        })
+        .andThen(function(){
+            // b: do something after a
+        });
+        
+You may noticed the `andThen` function. It is a symbolic link for `step`. The reason for `andThen` is to provide the possibility to have a better and more human readable code.
+    
+### Finalize a Flow Description
+
+A flow description can be prevented to extended at a given point by calling the `finalize` function. Further attempts to create flow steps will be declined.
+
+    flow.finalize();
+    
+    flow.step( ... ); // throws an Error
+
+### Creating a Flow Instance
+
+If you want to instantiate a flow description then you have to create a baton. A baton is a flow instance representation. It contains all data about the execution state plus the ability to start and stop the execution. 
+
+    flow.start();
+    
+If you start a flow then all steps will be executed and the baton passed to the single steps.
+
+    flow.step( function( previousValue, baton ){
+        
     });
 
-# Passing Values between tasks
+Instance of flows can only created if the description is finalized. If the `start` function is called on a description object while the description is not finalized then it will be finalized with the invokement of the `start` function.
 
-jWorkflow tasks can access the return value of the previous task with the previous parameter:
+### Custom Instance Context
 
-    function meaningOfLife() {
-       //find the meaning of life
-       return 42; 
-    }
+Every flow instance can get a custom context object. Every flow step will be called with that context. If no instance context is given then the step will be called with `null` as context.
+
+    // the two context objects
+    var ctx1 = { x:0  };
+    var ctx2 = { x:10 };
+
+    // the flow
+    var flow = jsFlow().step(function(){
+        this.x++;
+    });
     
-    function writeBook(previous) {
-       console.log("the meaning of life is " + previous);
-    }
+    // start two instances with different contexts
+    flow.start(ctx1);
+    flow.start(ctx2);
+    
+    // this can be asserted
+    equal( ctx1.x , 1 );
+    equal( ctx2.x , 11 );
 
-    var guide = jWorkflow.order(meaningOfLife).andThen(writeBook);
-    guide.start();
+### Passing Values
 
-# Handling Async calls
+Flow steps can access the return value of the previous task with the previous parameter
 
-Sometimes(probably all the time) you will need to do something async when working with
-tasks, jWorkflow provides the ability to control the execution of the workflow via a
-baton that is passed to the task
+    var flow = jsFlow()
+        .step(function(){
+            return 42; // the answer for everything :D
+        })
+        .step(function( previous ){
+            equal( previous, 42 )
+        })
+        .start();
 
-    function procrastinate(previous, baton) {
+# Handling Async Calls
+
+Sometimes (probably all the time) you will need to do something async when working with tasks. jsFlow provides the ability to control the execution of the workflow via the baton that is passed to every step.
+
+    function wait( previous, baton ){
+        
         //take the baton, this means the next task will not run until you pass the baton
         baton.take();
 
         window.setTimeout(function() {
-            //do some stuff
-
+        
             //please be nice and always remember to pass the baton!
             baton.pass();
-        }, 1000);
+            
+        },1000);
     }
 
-If you want to pass a return value to the next task you can pass it along with the
-baton.
+If you want to pass a return value to the next task you can pass it along with the baton. **NOTE:** if you did take the baton, the return value from your function will NOT be passed to the next task:
 
-NOTE: if you did take the baton, the return value from your function will NOT be passed to 
-the next task:
-
-    function awesometown(previous, baton) {
+    function wait( previous, baton ){
         baton.take();
 
-        window.setTimeout(function() {
-            
-            //do stuff
-            
-            baton.pass(420);    //This value will be passed to the next task
-        }, 100);
+        window.setTimeout(function(){            
+            baton.pass(42); // this value will be passed to the next task
+        }, 1000 );
 
-        return 50; // this will NOT be passed to the next function since you took the baton.
+        return 32; // this will NOT be passed to the next function since you took the baton.
     }
 
 
