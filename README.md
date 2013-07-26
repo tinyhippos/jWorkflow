@@ -251,11 +251,14 @@ This is a cryptic code that isn't easy to read. Furthermore you get an overhead 
 
     var myCtx = { x:0, i:1 };
    
-    flow.step( function( prev, baton ){ 
-         this.x += i;
-         if( i<10 ) baton.revise();
-        })
-        .start({ context: myCtx });
+    flow
+      .step( function( prev, baton ){ 
+          this.x += i;
+         
+          i++;
+          if( i<10 ) baton.revise();
+      })
+      .start( ... );
        
 This function is very usable for tasks that doing something in relation to a list of objects ( **like loading images** ).
 
