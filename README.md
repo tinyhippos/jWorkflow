@@ -2,9 +2,11 @@
 
 * [About jsFlow](#about-jsflow)
 * [Getting Started](#getting-started)
-    * [NodeJS](#nodejs)
     * [Webbrowser](#webbrowser)
+    * [NodeJS](#nodejs)
 * [Compability to jWorkflow](#compability-to-jworkflow)
+    * [Webbrowser](#webbrowser-1)
+    * [NodeJS](#nodejs-1)
 * [Usage](#usage)
     * [Creating a Flow Description](#creating-a-flow-description)
     * [Finalize a Flow Description](#finalize-a-flow-description)
@@ -31,11 +33,6 @@ jsFlow is a fork of [jWorkflow from tinyhippos](https://github.com/tinyhippos/jW
 
 jWorkflow can be used in node or included in the browser. Simply put it into your workspace and load it via the correct loading algorithm ( according to your environment ).
 
-### NodeJS
-
-    var jsFlow = require("jsFlow").jsFlow;
-    var flow   = jsFlow();
-    
 ### Webbrowser
 
     <script type="text/javascript" src="../dist/jsFlow.min.js"></script>
@@ -43,26 +40,37 @@ jWorkflow can be used in node or included in the browser. Simply put it into you
     <script>
         var flow   = jsFlow();
     </script>
+		
+### NodeJS
+
+    var jsFlow = require("jsFlow").jsFlow;
+    var flow   = jsFlow();
 
 
 ## Compability to jWorkflow
 
-jsFlow is 100% API compatible to jWorkflow. This means if you want to port one of your programs that used jWorkflow then you do not have to change your code. Simply put the following line into your page before the line where you load jsFlow.
+jsFlow is 100% API compatible to jWorkflow. This means if you want to port one of your programs that used jWorkflow then you do not have to change your workflow definitions. The following calls will be placed in your environment and works as a wrapper.
+    
+    jWorkflow; 									// helper object
+		jWorkflow.order( ); 				// invokes a jsFlow();
+    jWorkflow.order( fn ); 			// invokes a jsFlow().andThen( fn );
+    jWorkflow.order( fn,ctx ); 	// invokes a jsFlow().andThen( fn,ctx );
 
-    var JSFLOW_JWORKFLOW_API_COMPATIBLE_MODE = true; 
+### Webbrowser
 
-**Note:** `JSFLOW_JWORKFLOW_API_COMPATIBLE_MODE` must be available in the window object of your browser. API compability is always enabled for Nodejs environments. You simply have to wrap your require call like the following...
+Simply put the following line into your page before the line where you load jsFlow. Your jWorkflow compatible code works now without any changes.
 
+    window.JSFLOW_JWORKFLOW_API_COMPATIBLE_MODE = true; 
+
+### NodeJS
+
+NodeJs has the API compability always enabled. You simply have to write the following at your require call to use the jWorkflow Wrapper.
+
+		// var jsFlow = require("jsFlow").jsFlow;
 		var jWorkflow = require("jsFlow.js").jWorkflow;
 		
 		jWorkflow.order( ... ).andThen( ... ).start( ... );
 
-The following calls will be available in your environment which creates the complete API compability.
-    
-    jWorkflow; // is an empty helper object
-    
-    jWorkflow.order( fn ); // same as jsFlow().andThen( fn );
-    
 
 ## Usage
 
