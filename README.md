@@ -1,6 +1,7 @@
 # Documentation - Content
 
 * [About jsFlow](#about-jsflow)
+* [Changelog](#changelog)
 * [Why jsFlow](#why-jsflow)
 * [Goals](#goals)
 * [Getting Started](#getting-started)
@@ -39,6 +40,12 @@ jsFlow is a fork of [jWorkflow from tinyhippos](https://github.com/tinyhippos/jW
 
 Of course if you have ideas to enhance jsFlow then please make a pull request. ;)
 
+
+## Changelog
+
+**1.0.1**  
+
+ * Bugfix with compatibility variable which causes a crash in some environments
 
 ## Why jsFlow
 
