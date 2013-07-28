@@ -28,7 +28,7 @@
     * [Parallel Steps](#parallel-steps)
     * [Canceling Workflows](#canceling-workflows)
 * [Cookbook](#cookbook)
-	* [State-Machine](state-machine)
+	* [State-Machine](#state-machine)
 
 
 ## About jsFlow
