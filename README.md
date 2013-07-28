@@ -46,19 +46,23 @@ Some of you may ask why to distribute an extended version of jWorkflow. I'm a pr
 
 But jWorkflow has some pitfalls like the RAM consumption and the lack of the ability to manipulate the execution flow dynamically at runtime. That is the reason why we developed jsFlow. It's a real enhancement of jWorkflow not a replacement. That's why one of our targets is the possibility to run jsFlow in a 100% API compability mode. 
 
-We have done a lot of internal refactorings to create a smaller memory footprint. Beside of that jsFlow adds a lot of new features. Basically to allow the realization of two flow types with jsFlow.
+We have done a lot of internal refactorings to create a smaller memory footprint. Beside of that jsFlow adds a lot of new features. Basically our target is to create a simple library to realize these things on top of it.
 
-  * Sync/Async Workflows
-	* State-Machine Flows
+	* Loading/Use remote of stuff in a logical order ( *resource loading* )
+	* Stateful workflows ( *state machine* )
+	* AI workflows 
 
 
 ## Goals
 
-* Micro-Library ( minified size <= 4KB ) 
-* jWorkflow API compatibility
-* Dynamic execution flow manipulation
-* Creation of many flow instances
-* State-Machine support
+* [**DONE**] Micro-Library ( minified size <= 4KB ) 
+* [**DONE**] jWorkflow API compatibility
+* [**DONE**] Dynamic execution flow manipulation
+* [**DONE**] Creation of many flow instances
+* [**DONE**] State-Machine support
+* Change order at runtime with a priority system ( AI flows )
+* Steps with meta data
+* Enable/Disable steps of the flow at runtime
 
 ## Getting Started
 
