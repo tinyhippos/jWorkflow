@@ -401,8 +401,9 @@ To cancel the execution of the workflow you can call the drop method on the bato
         return 10;
     }
 
-		// in sync mode you have to return the return of your drop because it's not doing a `baton.pass`
-		// if your flow decide dynamically for sync/async then do (which is the best decision is todo always)
+		// in sync mode you have to return the return of your drop because it's 
+		// not doing a `baton.pass` if your flow decide dynamically for sync/async 
+		// then do (which is the best decision is todo always)
 		function (previous, baton) {
 				...
 				
