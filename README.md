@@ -27,7 +27,7 @@
     * [Marked Steps](#marked-steps)
     * [Parallel Steps](#parallel-steps)
     * [Canceling Workflows](#canceling-workflows)
-* [Cookbook](#cookbook)
+* [Full Version Extras](#full-version-extras)
 	* [State-Machine](#state-machine)
 
 
@@ -413,75 +413,11 @@ To cancel the execution of the workflow you can call the drop method on the bato
 				...
 		}
 		
-## Cookbook
-
-This chapter contains some design patterns or ideas that can be realized with jsFlow.
+## Full Version Extras
 
 ### State-Machine
 		
-		var statemachine = jsFlow()
-			
-			// INITIALIZER FUNCTION
-			.step(function( ev, baton ){ 
-				baton.transition = function( to ){
-					this._taken = false;
-					baton.nextStep( to );
-					baton.state = to;
-					this._taken = true;
-				}
-				
-				baton.event = baton.pass;
-				
-				baton.transition("STATE_A");
-			})
-			
-			// A
-			.step("STATE_A",function( ev, baton ){
-				
-				if( ev ) baton.transition("STATE_C");
-				else baton.transition("STATE_B");
-			})
-			
-			// B
-			.step("STATE_B",function( ev, baton ){
-				
-				this.x++;
-				
-				// CALLS STATE_C DIRECTLY AS ACTION STATE
-				baton.transition("STATE_C");
-				baton.pass();
-				
-			},{
-				x:0
-			})
-			
-			// C
-			.step("STATE_C",function( ev, baton ){
-				baton.transition("STATE_A");
-			})
-			
-			.start({
-				asyncMode:true
-			});
-			
-		// -------------------
-		
-		equal( statemachine.state , "STATE_A" );
-		
-		statemachine.event( true );
-		equal( statemachine.state , "STATE_C" );
-		
-		statemachine.event();
-		equal( statemachine.state , "STATE_A" );
-			
-		statemachine.event(false);
-		equal( statemachine.state , "STATE_B" );
-		
-		statemachine.event();
-		equal( statemachine.state , "STATE_A" );
-		
-		
-If you are using the full version of jsFlow then you also have the `jsFlowStateMachine` property in your environment. You can build the same state machine with that factory function. **Note:** Both machines runs the same code but works different. The created state machine by `jsFlowStateMachine` is a little bit slower but resolves in a more feature rich version.
+If you are using the full version of jsFlow then you also have the `jsFlowStateMachine` property in your environment. With that function you will be able to create a state machine on top of `jsFlow`.
 
 		var stateB_Data = {
 			x:0
@@ -496,7 +432,6 @@ If you are using the full version of jsFlow then you also have the `jsFlowStateM
 			},
 			
 			"STATE_A", {
-				
 				"true": function( p,b ){ 
 					b.transition("STATE_C"); 
 				},
@@ -525,12 +460,12 @@ If you are using the full version of jsFlow then you also have the `jsFlowStateM
 			}
 		]);
 		
+		// triggers INIT outcome
 		statemachine.event();
 		
-The syntax is easy. The list contains this syntax `[ stateName, stateImpl [,stateName, stateImpl]*]`. A state implementation can be a function or an object. A function is always the body. This kind of states cannot react the onenter event. If you want to watch to that event then you have to define it as object with an `onenter` property. 
+The syntax is easy. The list contains this syntax `[ stateName, stateImpl [,stateName, stateImpl]*]`. A state implementation can be a function or an object. A function is always the body. This kind of states cannot react the onenter event. If you want to watch to that event then you have to define it as object with an `onenter` property. The `onenter` function of the first state will be automatically triggered when the state machine is created. 
 
 			"STATE_B", {
-				context: stateB_Data,
 				onevent:function( p,b ){
 					// ...
 				}
@@ -545,3 +480,14 @@ The body will be set in the `onevent` function. Sometimes you want to do differe
 				"false": function( p,b ){ 
 					b.transition("STATE_B"); 
 				}
+				
+A transition to another state can be done by calling `baton.transition(state)`. If a state event function does not make a transition then the default transition will be triggered. This default transition will be set by placing the `defaultOutcome` property into the state implementation object.
+
+If you want to have custom context objects for your state then you can place a `context` property into the state implementation. This causes that the context object will be the `this` object in every function of the state.
+
+			"STATE_B", {
+				context: { x: 10 },
+				onevent:function( p,b ){
+					equal( this.x , 10 );
+				}
+			},
