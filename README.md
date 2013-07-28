@@ -1,6 +1,8 @@
 # Documentation - Content
 
 * [About jsFlow](#about-jsflow)
+* [Why jsFlow](#why-jsflow)
+* [Goals](#goals)
 * [Getting Started](#getting-started)
     * [Webbrowser](#webbrowser)
     * [NodeJS](#nodejs)
@@ -15,21 +17,48 @@
     * [Custom Step Context](#custom-step-context)
     * [Passing Values](#passing-values)
     * [Initial Value](#initial-value)
+    * [Evaluation Mode](#evaluation-mode)
     * [Handling Async Calls](#handling-async-calls)
     * [Final Callback](#final-callback)
     * [Waiting](#waiting)
     * [Subflows](#subflows)
     * [Revise Steps](#revise-steps)
+    * [Reset Steps](#reset-steps)
+    * [Marked Steps](#marked-steps)
     * [Parallel Steps](#parallel-steps)
     * [Canceling Workflows](#canceling-workflows)
+* [Cookbook](#cookbook)
+	* [State-Machine](state-machine)
 
 
 ## About jsFlow
 
-jsFlow is a fork of [jWorkflow from tinyhippos](https://github.com/tinyhippos/jWorkflow). It's a very fast and small library ( 2KB minified ) that provides an easy to read, chainable API for creating modular and reusable workflows in JavaScript.
+jsFlow is a fork of [jWorkflow from tinyhippos](https://github.com/tinyhippos/jWorkflow). It's a very fast, memory efficient and small library that provides an easy to read, chainable API for creating modular and reusable workflows in JavaScript.
 
-**Current:** [0.9.5](https://github.com/Tapsi/jsFlow/tree/master/dist)
+**Current:** [1.0](https://github.com/Tapsi/jsFlow/tree/master/dist)
 
+Of course if you have ideas to enhance jsFlow then please make a pull request. ;)
+
+
+## Why jsFlow
+
+Some of you may ask why to distribute an extended version of jWorkflow. I'm a project developer of [Custom Wars: Tactics](https://github.com/ctomni231/cwtactics). It's a clone of the popular Advance Wars Game. We've decided to use modern and efficient programming patterns and one of them is the flow technic to bind differen't task together into a execution chain. That's why we used jWorkflow. 
+
+But jWorkflow has some pitfalls like the RAM consumption and the lack of the ability to manipulate the execution flow dynamically at runtime. That is the reason why we developed jsFlow. It's a real enhancement of jWorkflow not a replacement. That's why one of our targets is the possibility to run jsFlow in a 100% API compability mode. 
+
+We have done a lot of internal refactorings to create a smaller memory footprint. Beside of that jsFlow adds a lot of new features. Basically to allow the realization of two flow types with jsFlow.
+
+  * Sync/Async Workflows
+	* State-Machine Flows
+
+
+## Goals
+
+* Micro-Library ( minified size <= 4KB ) 
+* jWorkflow API compatibility
+* Dynamic execution flow manipulation
+* Creation of many flow instances
+* State-Machine support
 
 ## Getting Started
 
@@ -170,6 +199,26 @@ If you start a flow then you can pass a previous value to the first step of the 
     flow.start( null, null, 42 );
     flow.start({ initialValue: 42 });
 
+### Evaluation Mode
+
+Sometimes you have a complete asynchron workflow or you wan't to trigger the single steps yourself. If you know that before you can set the complete workflow into the asynchron mode. This automatically does a `baton.take()` before the step will be executed. Means you have to trigger the next step by calling `pass`, `revise` or `reset`.
+
+		var flow = jsFlow()
+			.step(function( p ){
+        // a ( runs synchron )
+				equal( p, 10 );
+    	})
+			.step(function( p ){
+        // b ( runs synchron )
+				equal( p, 42 );
+    	});
+
+		// runs a
+		var instance = flow.start({ asyncMode:true, initialValue:10 });
+		
+		// runs b
+		instance.pass(42);
+
 ### Passing Values
 
 Flow steps can access the return value of the previous task with the previous parameter
@@ -274,9 +323,42 @@ This is a cryptic code that isn't easy to read. Furthermore you get an overhead 
       })
       .start( ... );
        
-This function is very usable for tasks that doing something in relation to a list of objects ( *like loading images* ). **Note:** At the moment the revise calls gets stacked because the invoking step invokes the next steps. This means the number of revises per step are limited to the depth of the function call stack of the underlying javaScript environment.
+This function is very usable for tasks that doing something in relation to a list of objects ( *like loading images* ). 
 
+*Note:* version 1.0 and greater does not force into the asynchron mode. Only if you called `baton.take()` before then this function will pass your your return via asynchron mode. If you use the jWorkflow compatibility mode then the evalutation will always forced into asynchron mode because of the complete API compability.
 
+### Reset Steps
+
+If you wan't to rerun a created instance during an execution or after a complete execution then you can use the `reset` function to reset the execution data.
+
+    flow
+      .step( function( prev, baton ){ 
+				...
+      })
+      .step( function( prev, baton ){ 
+				if( this.myVar ) baton.reset(); // starts again
+      })
+      .start( ... );
+			
+### Marked Steps
+
+You can mark steps with a name. This enables you to go back to them in the middle of the evaluation if you want. 
+
+		flow
+      .step( function( prev, baton ){ 
+			
+				// if myDep is true then skip the next step 
+				// after completition of this step
+				if( this.myDep ) baton.nextStep("C");
+      })
+      .step( function( prev, baton ){ 
+				...
+      })
+      .step( "C", function( prev, baton ){ 
+				...
+      })
+      .start( ... );
+			
 ### Parallel Steps
 
 If you need to handle some tasks and don't care about when they are done you can pass in an array of functions and / or other workflows to execute at the same time.
@@ -286,13 +368,180 @@ If you need to handle some tasks and don't care about when they are done you can
 
 ### Canceling Workflows
 
-To cancel the execution of the workflow you can call the drop method on the baton. **NOTE:** Stopping a flow will force it into asynchron mode.
+To cancel the execution of the workflow you can call the drop method on the baton. 
 
+*Note:* version 1.0 and greater does not force into the asynchron mode. Only if you called `baton.take()` before then this function will pass your your return via asynchron mode. If you use the jWorkflow compatibility mode then the evalutation will always forced into asynchron mode because of the API compability.
+	
+		// synchron mode
     function (previous, baton) {
-       
+		
+        // the value passed to drop will be passed onto the final callback if it exists
+        return baton.drop("I dropped the soap");
+    }
+		
+		// asynchron mode
+    function (previous, baton) {
+       	baton.take();
+
         //the value passed to drop will be passed onto the final callback if it exists
         baton.drop("I dropped the soap");
         
         //this value will NOT be passed to the next workflow step
         return 10;
     }
+		
+		// synchron mode
+    function (previous, baton) {
+
+        // in this case the value passed to drop
+				// will not used because non asynchron mode
+        baton.drop("I dropped the soap");
+        
+        //this value will be passed to the final callback ( if exists )
+        return 10;
+    }
+
+		// in sync mode you have to return the return of your drop because it's not doing a `baton.pass`
+		// if your flow decide dynamically for sync/async then do (which is the best decision is todo always)
+		function (previous, baton) {
+				...
+				
+				// the execution of this flow step ends in both modes here
+				// when xyz resolves to true
+				if( xyz ) return baton.drop( yourReturn );
+				
+				...
+		}
+		
+## Cookbook
+
+This chapter contains some design patterns or ideas that can be realized with jsFlow.
+
+### State-Machine
+		
+		var statemachine = jsFlow()
+			
+			// INITIALIZER FUNCTION
+			.step(function( ev, baton ){ 
+				baton.transition = function( to ){
+					this._taken = false;
+					baton.nextStep( to );
+					baton.state = to;
+					this._taken = true;
+				}
+				
+				baton.event = baton.pass;
+				
+				baton.transition("STATE_A");
+			})
+			
+			// A
+			.step("STATE_A",function( ev, baton ){
+				
+				if( ev ) baton.transition("STATE_C");
+				else baton.transition("STATE_B");
+			})
+			
+			// B
+			.step("STATE_B",function( ev, baton ){
+				
+				this.x++;
+				
+				// CALLS STATE_C DIRECTLY AS ACTION STATE
+				baton.transition("STATE_C");
+				baton.pass();
+				
+			},{
+				x:0
+			})
+			
+			// C
+			.step("STATE_C",function( ev, baton ){
+				baton.transition("STATE_A");
+			})
+			
+			.start({
+				asyncMode:true
+			});
+			
+		// -------------------
+		
+		equal( statemachine.state , "STATE_A" );
+		
+		statemachine.event( true );
+		equal( statemachine.state , "STATE_C" );
+		
+		statemachine.event();
+		equal( statemachine.state , "STATE_A" );
+			
+		statemachine.event(false);
+		equal( statemachine.state , "STATE_B" );
+		
+		statemachine.event();
+		equal( statemachine.state , "STATE_A" );
+		
+		
+If you are using the full version of jsFlow then you also have the `jsFlowStateMachine` property in your environment. You can build the same state machine with that factory function. **Note:** Both machines runs the same code but works different. The created state machine by `jsFlowStateMachine` is a little bit slower but resolves in a more feature rich version.
+
+		var stateB_Data = {
+			x:0
+		};
+			
+		var statemachine = jsFlowStateMachine([
+			"INIT",{
+				defaultOutcome: "STATE_A",
+				onenter: function( p,b ){
+					// ...
+				}
+			},
+			
+			"STATE_A", {
+				
+				"true": function( p,b ){ 
+					b.transition("STATE_C"); 
+				},
+				
+				"false": function( p,b ){ 
+					b.transition("STATE_B"); 
+				}
+			},
+			
+			"STATE_B", {
+				context: stateB_Data,
+				onevent:function( p,b ){
+					this.x++;
+					
+					// CALLS STATE_C DIRECTLY AS ACTION STATE
+					b.transition("STATE_C");
+					b.pass();
+				}
+			},
+			
+			"STATE_C", {
+				defaultOutcome: "STATE_A",
+				onevent: function( ev,b ){
+					// ...
+				}
+			}
+		]);
+		
+		statemachine.event();
+		
+The syntax is easy. The list contains this syntax `[ stateName, stateImpl [,stateName, stateImpl]*]`. A state implementation can be a function or an object. A function is always the body. This kind of states cannot react the onenter event. If you want to watch to that event then you have to define it as object with an `onenter` property. 
+
+			"STATE_B", {
+				context: stateB_Data,
+				onevent:function( p,b ){
+					// ...
+				}
+			}
+			
+The body will be set in the `onevent` function. Sometimes you want to do different stuff in a state in relation to the input. This can be done by removing the `onevent` property by special event handlers which will be called if previous value resolves to the property name.
+
+				"true": function( p,b ){ 
+					b.transition("STATE_C"); 
+				},
+				
+				"false": function( p,b ){ 
+					b.transition("STATE_B"); 
+				}

@@ -1,7 +1,7 @@
 {
   "name": "jsFlow",
-  "version": "0.9.5",
-  "description": "A simple implementation to define and run finite, reusable flow modules",
+  "version": "1.0.0",
+  "description": "A simple library to define and run finite, reusable flow modules",
   "homepage": "https://github.com/Tapsi/jsFlow",
   "author": "Tapsi",
   "contributors": [
