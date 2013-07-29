@@ -43,7 +43,7 @@ Of course if you have ideas to enhance jsFlow then please make a pull request. ;
 
 ## Changelog
 
-**1.0.1**  
+**1.0.2**  
 
  * Bugfix with compatibility variable which causes a crash in some environments
 
