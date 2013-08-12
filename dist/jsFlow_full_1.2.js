@@ -302,7 +302,7 @@
 	}
 
 })();
-var jsFlowStateMachine = function( startState, impl ){
+var jsFlowStateMachine = function( startState, impl, context ){
 	
 	if( arguments.length === 1 ) impl = startState;
 	
@@ -404,7 +404,11 @@ var jsFlowStateMachine = function( startState, impl ){
 	}
 	
 	// Create flow instance
-	var instance = flow.start({ asyncMode:true });
+	if( arguments.length < 3 ) context = null;
+	var instance = flow.start({ 
+		asyncMode:true, 
+		context: context 
+	});
 	instance.pass();
 	
 	return instance;
