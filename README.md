@@ -28,8 +28,7 @@
     * [Marked Steps](#marked-steps)
     * [Parallel Steps](#parallel-steps)
     * [Canceling Workflows](#canceling-workflows)
-* [Full Version Extras](#full-version-extras)
-	* [State-Machine](#state-machine)
+* [State-Machine Factory](#state-machine)
 
 
 ## About jsFlow
@@ -42,6 +41,11 @@ Of course if you have ideas to enhance jsFlow then please make a pull request. ;
 
 
 ## Changelog
+
+**1.1**  
+
+ * Added wildcard event `*` to the state machine feature to handle events that aren't catched by specialized handlers
+ * Added error handling to the state machine feature to send the state machine into an `ERROR` state with `baton.error(reason)`
 
 **1.0.2**  
 
@@ -425,81 +429,99 @@ To cancel the execution of the workflow you can call the drop method on the bato
 				...
 		}
 		
-## Full Version Extras
-
-### State-Machine
+## State-Machine
 		
 If you are using the full version of jsFlow then you also have the `jsFlowStateMachine` property in your environment. With that function you will be able to create a state machine on top of `jsFlow`.
 
-		var stateB_Data = {
-			x:0
-		};
+    var stateB_Data = {
+        x:0
+    };
 			
-		var statemachine = jsFlowStateMachine([
-			"INIT",{
-				defaultOutcome: "STATE_A",
-				onenter: function( p,b ){
-					// ...
-				}
-			},
+    var statemachine = jsFlowStateMachine([
+        "INIT",{
+            defaultOutcome: "STATE_A",
+            onenter: function( p,b ){
+                // ...
+            }
+        },
 			
-			"STATE_A", {
-				"true": function( p,b ){ 
-					b.transition("STATE_C"); 
-				},
-				
-				"false": function( p,b ){ 
-					b.transition("STATE_B"); 
-				}
-			},
+        "STATE_A", {
+            "true": function( p,b ){ 
+                b.transition("STATE_C"); 
+            },
+
+            "false": function( p,b ){ 
+                b.transition("STATE_B"); 
+            }
+        },
 			
-			"STATE_B", {
-				context: stateB_Data,
-				onevent:function( p,b ){
-					this.x++;
+        "STATE_B", {
+            context: stateB_Data,
+            onevent:function( p,b ){
+                this.x++;
 					
-					// CALLS STATE_C DIRECTLY AS ACTION STATE
-					b.transition("STATE_C");
-					b.pass();
-				}
-			},
+                // CALLS STATE_C DIRECTLY AS ACTION STATE
+                b.transition("STATE_C");
+                b.pass();
+            }
+        },
 			
-			"STATE_C", {
-				defaultOutcome: "STATE_A",
-				onevent: function( ev,b ){
-					// ...
-				}
-			}
-		]);
+        "STATE_C", {
+            defaultOutcome: "STATE_A",
+            onevent: function( ev,b ){
+                // ...
+            }
+        }
+    ]);
 		
-		// triggers INIT outcome
-		statemachine.event();
+    // triggers INIT outcome
+    statemachine.event();
 		
 The syntax is easy. The list contains this syntax `[ stateName, stateImpl [,stateName, stateImpl]*]`. A state implementation can be a function or an object. A function is always the body. This kind of states cannot react the onenter event. If you want to watch to that event then you have to define it as object with an `onenter` property. The `onenter` function of the first state will be automatically triggered when the state machine is created. 
 
-			"STATE_B", {
-				onevent:function( p,b ){
-					// ...
-				}
-			}
+    "STATE_B", {
+        onevent:function( p,b ){
+            // ...
+        }
+    }
 			
-The body will be set in the `onevent` function. Sometimes you want to do different stuff in a state in relation to the input. This can be done by removing the `onevent` property by special event handlers which will be called if previous value resolves to the property name.
+The body will be set in the `onevent` function. Sometimes you want to do different stuff in a state in relation to the input. This can be done by removing the `onevent` property by special event handlers which will be called if previous value resolves to the property name. The wildcard property will be evaluated if no specialized event matches.
 
-				"true": function( p,b ){ 
-					b.transition("STATE_C"); 
-				},
+    "true": function( p,b ){ 
+        b.transition("STATE_C"); 
+    },
 				
-				"false": function( p,b ){ 
-					b.transition("STATE_B"); 
-				}
+    "false": function( p,b ){ 
+        b.transition("STATE_B"); 
+    }
 				
 A transition to another state can be done by calling `baton.transition(state)`. If a state event function does not make a transition then the default transition will be triggered. This default transition will be set by placing the `defaultOutcome` property into the state implementation object.
 
 If you want to have custom context objects for your state then you can place a `context` property into the state implementation. This causes that the context object will be the `this` object in every function of the state.
 
-			"STATE_B", {
-				context: { x: 10 },
-				onevent:function( p,b ){
-					equal( this.x , 10 );
-				}
-			},
+    "STATE_B", {
+        context: { x: 10 },
+        onevent:function( p,b ){
+            equal( this.x , 10 );
+        }
+    }
+		
+If you use `baton.error(reason)` then the state machine goes into the state `ERROR`. If not defined the state machine logs the error onto the console with `console.error(e)`. The `ERROR` state cannot leaved with an event, you have to move out manually with `baton.transition(to)`. If you define your own error state, then you can manipulate this behaviour (e.g. move automatically back to the initial state). 
+		
+		// default outcome
+    "ERROR", {
+        defaultOutcome: "INITIAL",
+        onenter: function( err ){
+            // do something
+        }
+    }
+		
+		// custom handler
+    "ERROR", {
+        "devBack": function( p,b ){
+            b.transition("INITIAL");
+        },
+				"*": function( p,b ){
+						// log error
+        }
+    }
