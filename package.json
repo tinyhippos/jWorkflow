@@ -1,17 +1,24 @@
 {
-  "name": "jWorkflow",
-  "version" : "0.8.0",
-  "description" : "dude, wheres my workflow?",
-  "homepage": "https://github.com/tinyhippos/jWorkflow",
-  "author": "gtanner",
-  "contributors": [{
-    "name": "Gord Tanner",
-    "email": "gtanner@gmail.com",
-    "url": "http://github.com/gtanner"
-  }],
-  "licenses": [{
-    "type": "MIT",
-    "url" : ""
-  }],
-  "main": "./lib/jWorkflow"
+  "name": "jsFlow",
+  "version": "1.2",
+  "description": "A simple library to define and run finite, reusable flow modules",
+  "homepage": "https://github.com/Tapsi/jsFlow",
+  "author": "Tapsi",
+  "contributors": [
+    {
+      "name": "Radom Alexander [BlackCat]",
+      "email": "blackcat.myako@gmail.com",
+      "url": "https://github.com/Tapsi"
+    }
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://opensource.org/licenses/MIT"
+    }
+  ],
+  "keywords": [
+    "flow",
+    "modularity"
+  ]
 }

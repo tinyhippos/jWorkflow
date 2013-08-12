@@ -1,17 +1,36 @@
 <!DOCTYPE HTML>
 <html>
-<head>
-  <title>jWorkflow Test Suite</title>
-  <link rel="stylesheet" href="vendor/qunit.css" type="text/css" media="screen" />
-  <script type="text/javascript" src="vendor/jquery.js"></script>
-  <script type="text/javascript" src="vendor/qunit.js"></script>
-  <script type="text/javascript" src="../lib/jWorkflow.js"></script>
-  <script type="text/javascript" src="test_jworkflow.js"></script>
-</head>
-    <body>
-      <h1 id="qunit-header">jWorkflow Test Suite</h1>
-      <h2 id="qunit-banner"></h2>
-      <h2 id="qunit-userAgent"></h2>
-      <ol id="qunit-tests"></ol>
-    </body>
+  
+  <head>
+    <title>jsFlow Test Suite</title>
+
+    <link rel="stylesheet" href="vendor/nv.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="vendor/qunit.js"></script>
+
+    <script> 
+      
+      // this makes possible to use applications that uses
+      // the API of jWorkflow 0.8.0 with the current jsFlow 
+      // implementation
+      var JSFLOW_JWORKFLOW_API_COMPATIBLE_MODE = true; 
+      
+    </script>
+    
+    <script type="text/javascript" src="../lib/jsFlow.js"></script>
+    <script type="text/javascript" src="../lib/factories.js"></script>
+
+    <script type="text/javascript" src="test/jWorkflow_API_test.js"></script>
+    <script type="text/javascript" src="test/multipleInstancesTest.js"></script>
+    <script type="text/javascript" src="test/contextTest.js"></script>
+    <script type="text/javascript" src="test/reviseTest.js"></script>
+    <script type="text/javascript" src="test/resetTest.js"></script>
+    <script type="text/javascript" src="test/evalMode.js"></script>
+    <script type="text/javascript" src="test/statemachine.js"></script>
+  </head>
+  
+  <body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture">jsFlow Test Suite</div>
+  </body>
+  
 </html>
