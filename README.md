@@ -35,12 +35,17 @@
 
 jsFlow is a fork of [jWorkflow from tinyhippos](https://github.com/tinyhippos/jWorkflow). It's a very fast, memory efficient and small library that provides an easy to read, chainable API for creating modular and reusable workflows in JavaScript.
 
-**Current:** [1.1](https://github.com/Tapsi/jsFlow/tree/master/dist)
+**Current:** [1.2](https://github.com/Tapsi/jsFlow/tree/master/dist)
 
 Of course if you have ideas to enhance jsFlow then please make a pull request. ;)
 
 
 ## Changelog
+
+**1.2** 
+
+ * Removed `onenter` event because of the wildcard handler `*`
+ * Added possibility to set jsFlow context in a jsFlowStateMachine
 
 **1.1**  
 
@@ -457,7 +462,7 @@ If you are using the full version of jsFlow then you also have the `jsFlowStateM
 			
         "STATE_B", {
             context: stateB_Data,
-            onevent:function( p,b ){
+            "*":function( p,b ){
                 this.x++;
 					
                 // CALLS STATE_C DIRECTLY AS ACTION STATE
@@ -468,7 +473,7 @@ If you are using the full version of jsFlow then you also have the `jsFlowStateM
 			
         "STATE_C", {
             defaultOutcome: "STATE_A",
-            onevent: function( ev,b ){
+            "*": function( ev,b ){
                 // ...
             }
         }
@@ -477,15 +482,15 @@ If you are using the full version of jsFlow then you also have the `jsFlowStateM
     // triggers INIT outcome
     statemachine.event();
 		
-The syntax is easy. The list contains this syntax `[ stateName, stateImpl [,stateName, stateImpl]*]`. A state implementation can be a function or an object. A function is always the body. This kind of states cannot react the onenter event. If you want to watch to that event then you have to define it as object with an `onenter` property. The `onenter` function of the first state will be automatically triggered when the state machine is created. 
+The syntax is easy. The list contains this syntax `[ stateName, stateImpl [,stateName, stateImpl]*]`. A state implementation can be a function or an object. A function is always the body. This kind of states cannot react the onenter event. If you want to watch to that event then you have to define it as object with an `*` property. The `*` function of the first state will be automatically triggered when the state machine is created. 
 
     "STATE_B", {
-        onevent:function( p,b ){
+        "*":function( p,b ){
             // ...
         }
     }
 			
-The body will be set in the `onevent` function. Sometimes you want to do different stuff in a state in relation to the input. This can be done by removing the `onevent` property by special event handlers which will be called if previous value resolves to the property name. The wildcard property will be evaluated if no specialized event matches.
+Sometimes you want to do different stuff in a state in relation to the input. This can be done by set special event handlers which will be called if previous value resolves to the property name. The wildcard property will be evaluated if no specialized event matches.
 
     "true": function( p,b ){ 
         b.transition("STATE_C"); 
@@ -501,14 +506,14 @@ If you want to have custom context objects for your state then you can place a `
 
     "STATE_B", {
         context: { x: 10 },
-        onevent:function( p,b ){
+        "*":function( p,b ){
             equal( this.x , 10 );
         }
     }
 		
 If you use `baton.error(reason)` then the state machine goes into the state `ERROR`. If not defined the state machine logs the error onto the console with `console.error(e)`. The `ERROR` state cannot leaved with an event, you have to move out manually with `baton.transition(to)`. If you define your own error state, then you can manipulate this behaviour (e.g. move automatically back to the initial state). 
 		
-		// default outcome
+    // default outcome
     "ERROR", {
         defaultOutcome: "INITIAL",
         onenter: function( err ){
@@ -516,7 +521,7 @@ If you use `baton.error(reason)` then the state machine goes into the state `ERR
         }
     }
 		
-		// custom handler
+    // custom handler
     "ERROR", {
         "devBack": function( p,b ){
             b.transition("INITIAL");

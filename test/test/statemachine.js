@@ -38,7 +38,7 @@ test( "test statemachine factory helper", function(){
 		
 		"STATE_B", {
 			context: stateB_Data,
-			onevent:function( p,b ){
+			"*":function( p,b ){
 				this.x++;
 				
 				// CALLS STATE_C DIRECTLY AS ACTION STATE
@@ -52,7 +52,7 @@ test( "test statemachine factory helper", function(){
 				i++;
 			},
 			defaultOutcome: "STATE_A",
-			onevent: function( ev,b ){
+			"*": function( ev,b ){
 				// ...
 			}
 		},
