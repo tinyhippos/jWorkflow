@@ -35,7 +35,7 @@
 
 jsFlow is a fork of [jWorkflow from tinyhippos](https://github.com/tinyhippos/jWorkflow). It's a very fast, memory efficient and small library that provides an easy to read, chainable API for creating modular and reusable workflows in JavaScript.
 
-**Current:** [1.0](https://github.com/Tapsi/jsFlow/tree/master/dist)
+**Current:** [1.1](https://github.com/Tapsi/jsFlow/tree/master/dist)
 
 Of course if you have ideas to enhance jsFlow then please make a pull request. ;)
 
