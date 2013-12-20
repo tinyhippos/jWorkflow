@@ -518,4 +518,29 @@ $(document).ready(function () {
                      }
                  });
     });
+
+
+    asyncTest("jWorkflow, we can pass another non-async workflow into andThen", function() {
+        var count = 0,
+            inc = function() { count++; },
+            order1 = jWorkflow.order(inc),
+            order2 = jWorkflow.order(order1);
+        order2.start(inc);
+        setTimeout(function() {
+          start();
+          equals(count, 2, "expect last work only being executed once"); 
+        }, 2);
+    });
+
+
+    asyncTest("jWorkflow, we can pass an array of non-async functions into andThen", function() {
+        var count = 0,
+            inc = function() { count++; },
+            order = jWorkflow.order([inc, inc]);
+        order.start(inc);
+        setTimeout(function() {
+          start();
+          equals(count, 3, "expect last work only being executed once"); 
+        }, 2);
+    });
 });
